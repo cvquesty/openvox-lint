@@ -2,6 +2,16 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [1.0.1] - 2026-02-09
+
+### Fixed
+
+- **space_before_arrow**: No longer generates false positives on properly
+  aligned `=>` arrows.  In a multi-parameter resource block, only the
+  parameter with the longest key name is expected to have a single space
+  before `=>`.  Shorter keys may have additional padding spaces for
+  alignment and these are no longer flagged.
+
 ## [1.0.0] - 2025-02-09
 
 ### Added
