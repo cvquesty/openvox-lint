@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/openvox-lint'
+
+exit_code = OpenvoxLint::CLI.new(ARGV.dup).run
+exit exit_code
