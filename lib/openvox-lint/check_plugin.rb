@@ -97,7 +97,10 @@ module OpenvoxLint
             when :LBRACE then depth += 1
             when :RBRACE then depth -= 1
             end
-            params << sem[j] if depth > 0
+            # Only collect tokens at depth 1 — the resource's own
+            # parameters.  Tokens at depth >= 2 belong to nested
+            # resource declarations and must not be included.
+            params << sem[j] if depth == 1 && sem[j].type != :RBRACE
             j += 1
           end
           results << { type: rtype, start: brace, end: j - 1, param_tokens: params }

@@ -2,6 +2,17 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [1.0.2] - 2026-02-09
+
+### Fixed
+
+- **duplicate_params**: No longer generates false positives when multiple
+  resource blocks inside a class or defined type share the same parameter
+  names (e.g. `command`, `path`, `onlyif` across separate `exec` blocks).
+  The underlying `compute_resource_indexes` helper now scopes each
+  resource's `param_tokens` to brace depth 1, so tokens belonging to
+  nested resource declarations are excluded.
+
 ## [1.0.1] - 2026-02-09
 
 ### Fixed
