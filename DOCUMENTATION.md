@@ -46,7 +46,7 @@ the lexer token types, the plugin system, and integration guidance.
 
 | Constant | Value | Description |
 |----------|-------|-------------|
-| `VERSION` | `'1.0.3'` | Gem version |
+| `VERSION` | `'1.0.4'` | Gem version |
 
 ### Class Methods
 
