@@ -175,7 +175,7 @@ openvox-lint ships with **38 built-in checks** organized into categories:
 
 | Check | Severity | Description |
 |-------|----------|-------------|
-| `double_quoted_strings` | warning | Use single quotes for strings without interpolation |
+| `double_quoted_strings` | warning | Use single quotes for strings without interpolation, escapes, or nested quotes |
 | `only_variable_string` | warning | Don't quote strings containing only a variable |
 | `single_quote_string_with_variables` | warning | Use double quotes for strings with variables |
 | `variables_not_enclosed` | warning | Variables in strings must use `${var}` braces |

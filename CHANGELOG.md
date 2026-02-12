@@ -2,6 +2,16 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [1.0.3] - 2026-02-09
+
+### Fixed
+
+- **double_quoted_strings**: No longer flags double-quoted strings that
+  contain nested single-quote characters (e.g. `"it's running"`,
+  `"use 'ensure' as first parameter"`).  Double quotes are the correct
+  choice when the string body contains literal single quotes, and this
+  is now recognised and skipped.
+
 ## [1.0.2] - 2026-02-09
 
 ### Fixed
