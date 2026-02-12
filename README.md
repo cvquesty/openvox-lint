@@ -494,4 +494,4 @@ Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
 
 ## Author
 
-Johnny Sheets ([@cvquesty](https://github.com/cvquesty))
+Jerald Sheets ([@cvquesty](https://github.com/cvquesty))

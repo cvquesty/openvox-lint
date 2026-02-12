@@ -7,7 +7,7 @@ require 'openvox-lint/version'
 Gem::Specification.new do |spec|
   spec.name          = 'openvox-lint'
   spec.version       = OpenvoxLint::VERSION
-  spec.authors       = ['Johnny Sheets']
+  spec.authors       = ['Jerald Sheets']
   spec.email         = ['jsheets@xai.com']
 
   spec.summary       = 'Check OpenVox/Puppet manifests against the style guide'
