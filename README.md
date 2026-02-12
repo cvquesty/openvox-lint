@@ -162,7 +162,7 @@ openvox-lint ships with **38 built-in checks** organized into categories:
 | `trailing_whitespace` | warning | No trailing whitespace at end of lines |
 | `hard_tabs` | warning | Use 2-space soft tabs, not literal tabs |
 | `line_length` | warning | Lines should not exceed 140 characters |
-| `space_before_arrow` | warning | At most one space before `=>` |
+| `space_before_arrow` | warning | Only the longest key in an aligned block should have one space before `=>` |
 | `strict_indent` | warning | Indentation must use 2-space increments |
 
 ### Arrow Alignment (1 check)

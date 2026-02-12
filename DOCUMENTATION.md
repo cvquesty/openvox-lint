@@ -46,7 +46,7 @@ the lexer token types, the plugin system, and integration guidance.
 
 | Constant | Value | Description |
 |----------|-------|-------------|
-| `VERSION` | `'1.0.0'` | Gem version |
+| `VERSION` | `'1.0.1'` | Gem version |
 
 ### Class Methods
 
@@ -311,6 +311,61 @@ report.format(problems, io: file) # to file
 ---
 
 ## Complete Check Reference
+
+### Whitespace & Alignment Checks
+
+#### `space_before_arrow` (WARNING)
+
+Controls spacing before `=>` (hash rocket) in resource parameter blocks.
+In Puppet manifests, it is standard practice to vertically align `=>`
+arrows within a resource body.  This means the parameter with the
+**longest key name** has exactly one space before `=>`, and all shorter
+keys have additional padding spaces to bring their `=>` into alignment.
+
+The check groups `=>` tokens by line proximity.  Within each group it
+identifies the longest key and only flags that key if it has more than
+one space before `=>`.  Shorter keys are permitted extra spaces for
+alignment.  A single-parameter resource with extra space before `=>`
+is always flagged (nothing to align with).
+
+**Good — properly aligned (no warnings):**
+```puppet
+file { '/etc/nginx/nginx.conf':
+  ensure  => file,
+  content => template('nginx/nginx.conf.erb'),
+  owner   => 'root',
+  group   => 'root',
+  mode    => '0644',
+}
+```
+
+Here `content` is the longest key (7 characters).  It has a single space
+before `=>`.  All other keys (`ensure`, `owner`, `group`, `mode`) have
+padding to align their `=>` with `content =>`'s column.  No warnings.
+
+**Bad — longest key has extra space:**
+```puppet
+file { '/tmp/foo':
+  ensure  => present,
+  mode    => '0644',
+  owner   => 'root',
+}
+```
+
+`ensure` is the longest key (6 chars) but has 2 spaces before `=>`.
+The check flags `ensure` only; `mode` and `owner` padding is fine.
+
+**Bad — single parameter with extra space:**
+```puppet
+package { 'httpd':
+  ensure   => installed,
+}
+```
+
+Only one parameter — no alignment context — the 3 extra spaces are
+flagged.
+
+---
 
 ### Puppet 8 / OpenVox 8 Migration Checks
 
