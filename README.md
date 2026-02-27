@@ -1,7 +1,7 @@
 # openvox-lint
 
-![Version](https://img.shields.io/badge/version-1.0.5-blue)
-![Ruby](https://img.shields.io/badge/ruby-%E2%89%A5%203.1-red)
+![Version](https://img.shields.io/badge/version-1.0.6-blue)
+![Ruby](https://img.shields.io/badge/ruby-%E2%89%A5%202.6-red)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 ![Checks](https://img.shields.io/badge/built--in%20checks-38-brightgreen)
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
@@ -40,8 +40,8 @@ Fully compatible with:
 
 | Requirement | Version | Notes |
 |------------|---------|-------|
-| **Ruby** | ≥ 3.1.0 | Required; check with `ruby --version` |
-| **RubyGems** | ≥ 3.0 | Included with Ruby 3.1+ |
+| **Ruby** | ≥ 2.6.0 | Required; check with `ruby --version`. Works with macOS system Ruby (2.6) and newer versions (3.x). |
+| **RubyGems** | ≥ 2.0 | Included with Ruby 2.6+ |
 | **Bundler** | ≥ 2.0 | `gem install bundler` if not present |
 | **OpenVox or Puppet** | 8.x | Optional; openvox-lint works standalone without an agent |
 | **Git** | ≥ 2.0 | For installation from source |
@@ -618,7 +618,7 @@ openvox-lint/
 
 | Feature | puppet-lint 5.x | openvox-lint 1.0 |
 |---------|-----------------|------------------|
-| Ruby requirement | ≥ 3.1 | ≥ 3.1 |
+| Ruby requirement | ≥ 3.1 | ≥ 2.6 (including macOS system Ruby) |
 | Runtime dependencies | None | None |
 | Built-in checks | ~25 | 38 |
 | Legacy facts detection | Via plugin | Built-in |

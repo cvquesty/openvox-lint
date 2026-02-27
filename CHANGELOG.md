@@ -2,6 +2,12 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [1.0.6] - 2026-02-25
+
+### Changed
+- **Ruby compatibility**: Lowered minimum Ruby version from 3.1.0 to 2.6.0 in the gemspec. The codebase uses no Ruby 3.x-specific features — all syntax is compatible with Ruby 2.6+ including macOS system Ruby. This broadens compatibility with systems that ship older Ruby versions without requiring a separate Ruby installation.
+- **Documentation**: Updated prerequisites, badges, and comparison table to reflect Ruby ≥ 2.6 support.
+
 ## [1.0.5] - 2026-02-25
 
 ### Changed
