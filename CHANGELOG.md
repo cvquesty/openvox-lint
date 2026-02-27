@@ -2,6 +2,12 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [1.0.7] - 2026-02-25
+
+### Changed
+- **Ruby compatibility**: Lowered minimum Ruby version to **2.5.0** (from 2.6.0). Covers every currently-supported enterprise platform out of the box — RHEL 8 / Rocky 8 (Ruby 2.5, supported until 2029), SLES 15 (Ruby 2.5), macOS system Ruby (2.6), Ubuntu 20.04+ (2.7+), and all modern Ruby 3.x releases. No code changes required — all syntax has been 2.5-compatible since 1.0.0.
+- **RubyGems.org release**: First official publication to RubyGems.org for `gem install openvox-lint`.
+
 ## [1.0.6] - 2026-02-25
 
 ### Changed
