@@ -2,6 +2,11 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [1.0.5] - 2026-02-25
+
+### Changed
+- **Documentation**: Comprehensive README rewrite with status badges, detailed "Enabling and Disabling Checks" guide (command-line flags, --only-checks, configuration files, inline suppression), "Updating" instructions (gem, bundler, source), and "Uninstalling" instructions (gem removal, config cleanup).
+
 ## [1.0.3] - 2026-02-09
 
 ### Fixed

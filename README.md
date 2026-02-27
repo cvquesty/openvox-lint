@@ -1,6 +1,6 @@
 # openvox-lint
 
-![Version](https://img.shields.io/badge/version-1.0.4-blue)
+![Version](https://img.shields.io/badge/version-1.0.5-blue)
 ![Ruby](https://img.shields.io/badge/ruby-%E2%89%A5%203.1-red)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 ![Checks](https://img.shields.io/badge/built--in%20checks-38-brightgreen)
