@@ -1,5 +1,11 @@
 # openvox-lint
 
+![Version](https://img.shields.io/badge/version-1.0.4-blue)
+![Ruby](https://img.shields.io/badge/ruby-%E2%89%A5%203.1-red)
+![License](https://img.shields.io/badge/license-Apache%202.0-blue)
+![Checks](https://img.shields.io/badge/built--in%20checks-38-brightgreen)
+![Status](https://img.shields.io/badge/status-stable-brightgreen)
+
 **A style-guide linter for OpenVox and Puppet manifests.**
 
 openvox-lint checks your `.pp` manifest files against the [Puppet Style Guide](https://puppet.com/docs/puppet/latest/style_guide.html) and catches common errors, deprecated patterns, legacy facts, strict-mode violations, and Puppet 8+ / OpenVox 8.x language issues.
@@ -17,11 +23,14 @@ Fully compatible with:
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Usage](#usage)
+- [Enabling and Disabling Checks](#enabling-and-disabling-checks)
 - [Built-in Checks (38)](#built-in-checks)
 - [Configuration](#configuration)
 - [Output Formats](#output-formats)
 - [Integration](#integration)
 - [Writing Custom Checks](#writing-custom-checks)
+- [Updating](#updating)
+- [Uninstalling](#uninstalling)
 - [Development](#development)
 - [License](#license)
 
@@ -148,6 +157,81 @@ openvox-lint -f github manifests/
 # Fail CI on warnings too
 openvox-lint --fail-on-warnings manifests/
 ```
+
+---
+
+## Enabling and Disabling Checks
+
+openvox-lint gives you fine-grained control over which checks run. This is useful when your project has intentional style deviations, or when you want to focus on specific issues.
+
+### Disabling Individual Checks
+
+Use `--no-<check_name>-check` on the command line to turn off a specific check:
+
+```bash
+# Disable the line length check
+openvox-lint --no-line_length-check manifests/
+
+# Disable multiple checks at once
+openvox-lint --no-line_length-check --no-arrow_alignment-check --no-strict_indent-check manifests/
+```
+
+### Running Only Specific Checks
+
+Use `--only-checks` to run *only* the checks you specify (everything else is skipped):
+
+```bash
+# Only check for legacy facts and hiera3 usage
+openvox-lint --only-checks legacy_facts,hiera3_function,top_scope_facts manifests/
+
+# Only check for errors (skip all warnings)
+openvox-lint --only-checks hiera3_function,import_statement,duplicate_params manifests/
+```
+
+### Disabling Checks in a Configuration File
+
+Instead of passing flags every time, create a `.openvox-lint.rc` file in your project root:
+
+```
+# .openvox-lint.rc
+# Each line is a command-line argument
+
+# Disable checks that don't apply to our project
+--no-line_length-check
+--no-strict_indent-check
+--no-documentation-check
+
+# Ignore vendored code
+--ignore-paths vendor/**/*.pp,pkg/**/*.pp
+```
+
+openvox-lint looks for this file automatically in the current directory and in `~/.openvox-lint.rc`.
+
+### Suppressing Checks on Specific Lines
+
+Use inline comments to suppress a check for a specific block of code:
+
+```puppet
+# Suppress a check for the next block
+# lint:ignore:line_length
+$very_long_variable = 'this line intentionally exceeds the limit because it is a configuration string'
+# lint:endignore
+
+# Suppress on a single line
+class myclass { # lint:ignore:documentation
+  # ...
+}
+```
+
+### Listing All Available Checks
+
+To see every check that openvox-lint can run:
+
+```bash
+openvox-lint --list-checks
+```
+
+This shows the check name, severity (warning or error), and description for all 38 built-in checks.
 
 ---
 
@@ -415,6 +499,73 @@ end
 ```
 
 Place in `lib/openvox-lint/plugins/checks/` and it will be auto-loaded.
+
+---
+
+## Updating
+
+### From RubyGems
+
+```bash
+# Update to the latest version
+gem update openvox-lint
+
+# Check the installed version
+openvox-lint --version
+```
+
+### From Bundler
+
+Update the version constraint in your `Gemfile` if needed, then:
+
+```bash
+bundle update openvox-lint
+```
+
+### From Source
+
+```bash
+cd openvox-lint
+git pull origin main
+gem build openvox-lint.gemspec
+gem install openvox-lint-*.gem
+```
+
+---
+
+## Uninstalling
+
+### Remove the Gem
+
+```bash
+gem uninstall openvox-lint
+```
+
+If you have multiple versions installed, it will ask which one to remove. To remove all versions:
+
+```bash
+gem uninstall openvox-lint --all
+```
+
+### Remove Configuration Files
+
+These are optional — openvox-lint does not leave system-wide files, but you may have created project or user configuration:
+
+```bash
+# Remove per-user config (if you created one)
+rm -f ~/.openvox-lint.rc
+
+# Remove per-project config (in each project that has one)
+rm -f /path/to/project/.openvox-lint.rc
+```
+
+### Remove from Bundler
+
+Remove the `gem 'openvox-lint'` line from your `Gemfile`, then:
+
+```bash
+bundle install
+```
 
 ---
 
