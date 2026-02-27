@@ -1,6 +1,7 @@
 # openvox-lint
 
-![Version](https://img.shields.io/badge/version-1.0.7-blue)
+[![Gem Version](https://img.shields.io/gem/v/openvox-lint)](https://rubygems.org/gems/openvox-lint)
+[![Gem Downloads](https://img.shields.io/gem/dt/openvox-lint)](https://rubygems.org/gems/openvox-lint)
 ![Ruby](https://img.shields.io/badge/ruby-%E2%89%A5%202.5-red)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 ![Checks](https://img.shields.io/badge/built--in%20checks-38-brightgreen)
@@ -636,6 +637,12 @@ openvox-lint/
 | vim-openvox integration | No | Native |
 
 ---
+
+## Links
+
+- **RubyGems**: [rubygems.org/gems/openvox-lint](https://rubygems.org/gems/openvox-lint)
+- **GitHub**: [github.com/cvquesty/openvox-lint](https://github.com/cvquesty/openvox-lint)
+- **Issues**: [github.com/cvquesty/openvox-lint/issues](https://github.com/cvquesty/openvox-lint/issues)
 
 ## License
 
