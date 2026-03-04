@@ -140,8 +140,9 @@ module OpenvoxLint
     end
 
     def scan_regex
-      start = @pos; start_col = @column
+      start = @pos; start_line = @line; start_col = @column
       @pos += 1; @column += 1
+      terminated = false
       while @pos < @code.length && @code[@pos] != '/'
         if @code[@pos] == '\\'
           @pos += 2; @column += 2
@@ -149,31 +150,41 @@ module OpenvoxLint
           @pos += 1; @column += 1
         end
       end
-      @pos += 1; @column += 1
-      add_token(:REGEX, @code[start...@pos], @line, start_col)
+      if @pos < @code.length
+        @pos += 1; @column += 1; terminated = true
+      end
+      if !terminated
+        raise OpenvoxLint::Error, "unterminated regex starting at line #{start_line}"
+      end
+      add_token(:REGEX, @code[start...@pos], start_line, start_col)
     end
 
     def scan_single_quoted_string
-      start = @pos; start_col = @column
+      start = @pos; start_line = @line; start_col = @column
       @pos += 1; @column += 1
+      terminated = false
       while @pos < @code.length
         if @code[@pos] == '\\'
           @pos += 2; @column += 2
         elsif @code[@pos] == "'"
-          @pos += 1; @column += 1; break
+          @pos += 1; @column += 1; terminated = true; break
         elsif @code[@pos] == "\n"
           @line += 1; @column = 1; @pos += 1
         else
           @pos += 1; @column += 1
         end
       end
-      add_token(:SSTRING, @code[start...@pos], @line, start_col)
+      if !terminated
+        raise OpenvoxLint::Error, "unterminated single-quoted string starting at line #{start_line}"
+      end
+      add_token(:SSTRING, @code[start...@pos], start_line, start_col)
     end
 
     def scan_double_quoted_string
-      start = @pos; start_col = @column
+      start = @pos; start_line = @line; start_col = @column
       @pos += 1; @column += 1
       has_interp = false
+      terminated = false
       while @pos < @code.length
         if @code[@pos] == '\\'
           @pos += 2; @column += 2
@@ -184,15 +195,18 @@ module OpenvoxLint
             @pos += 1; @column += 1
           end
         elsif @code[@pos] == '"'
-          @pos += 1; @column += 1; break
+          @pos += 1; @column += 1; terminated = true; break
         elsif @code[@pos] == "\n"
           @line += 1; @column = 1; @pos += 1
         else
           @pos += 1; @column += 1
         end
       end
+      if !terminated
+        raise OpenvoxLint::Error, "unterminated double-quoted string starting at line #{start_line}"
+      end
       type = has_interp ? :DQSTRING : :STRING
-      add_token(type, @code[start...@pos], @line, start_col)
+      add_token(type, @code[start...@pos], start_line, start_col)
     end
 
     def scan_variable

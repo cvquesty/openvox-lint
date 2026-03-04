@@ -6,11 +6,12 @@ module OpenvoxLint
   # Command-line interface for openvox-lint.
   class CLI
     def initialize(args = ARGV)
-      @args   = args
-      @config = OpenvoxLint.configuration
+      @args = args
     end
 
     def run
+      OpenvoxLint.reset_configuration!
+      @config = OpenvoxLint.configuration
       parse_options
       load_rc_file
       if @list_checks
@@ -41,7 +42,7 @@ module OpenvoxLint
         opts.on('--only-checks CHECKS', 'Comma-separated checks') { |c| @config.only_checks = c.split(',').map { |s| s.strip.to_sym } }
         opts.on('--ignore-paths PATHS', 'Comma-separated globs') { |p| @config.ignore_paths = p.split(',').map(&:strip) }
         opts.on('--list-checks', 'List available checks') { @list_checks = true }
-        opts.on('-c', '--config FILE', 'Config file path') { |f| @config.config_file = f }
+        opts.on('-c', '--config FILE', 'Config file path') { |f| @explicit_config_file = f }
       end
       remaining = []
       begin
@@ -59,7 +60,15 @@ module OpenvoxLint
     end
 
     def load_rc_file
-      ['.openvox-lint.rc', @config.config_file, File.expand_path('~/.openvox-lint.rc')].each do |path|
+      # Priority: explicit --config flag > local .openvox-lint.rc > ~/.openvox-lint.rc
+      # An explicit --config flag must always win.  The default value of
+      # config_file is nil until the user passes -c / --config.
+      candidates = if @explicit_config_file
+                     [@explicit_config_file]
+                   else
+                     ['.openvox-lint.rc', File.expand_path('~/.openvox-lint.rc')]
+                   end
+      candidates.each do |path|
         next unless path && File.exist?(path)
         @config.load_from_rc(path); break
       end

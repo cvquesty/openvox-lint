@@ -6,7 +6,9 @@ OpenvoxLint.new_check(:top_scope_facts) do
   def check
     tokens.each do |tok|
       next unless tok.type == :VARIABLE
-      name = tok.value.sub(/^\$/, '')
+      # Strip leading $ and any trailing : left by the lexer when a
+      # variable is used as a resource title ($::fact:).
+      name = tok.value.sub(/^\$/, '').chomp(':')
       next unless name.start_with?('::')
       fact_name = name.sub(/\A::/, '')
       # Skip module-qualified variables (e.g. ::mymodule::param)

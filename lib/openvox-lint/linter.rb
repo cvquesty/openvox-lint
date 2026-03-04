@@ -64,8 +64,14 @@ module OpenvoxLint
     end
 
     def ignored?(filepath)
+      # Normalize away leading './' so that patterns like 'vendor/**/*.pp'
+      # match regardless of whether the file was discovered as
+      # './vendor/foo.pp' or 'vendor/foo.pp'.
+      normalized = filepath.sub(%r{\A\./}, '')
       @config.ignore_paths.any? do |pat|
-        File.fnmatch?(pat, filepath, File::FNM_PATHNAME | File::FNM_DOTMATCH)
+        File.fnmatch?(pat, normalized, File::FNM_PATHNAME | File::FNM_DOTMATCH) ||
+          File.fnmatch?(pat, filepath, File::FNM_PATHNAME | File::FNM_DOTMATCH) ||
+          File.fnmatch?("**/#{pat}", normalized, File::FNM_PATHNAME | File::FNM_DOTMATCH)
       end
     end
   end

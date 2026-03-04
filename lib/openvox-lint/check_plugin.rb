@@ -83,7 +83,8 @@ module OpenvoxLint
       return false if @ignore_comments.empty?
       line = problem[:line]
       @ignore_comments.any? do |ic|
-        ic[:line] == line && (ic[:checks].empty? || ic[:checks].include?(problem[:check].to_s))
+        line >= ic[:start_line] && line <= ic[:end_line] &&
+          (ic[:checks].empty? || ic[:checks].include?(problem[:check].to_s))
       end
     end
 

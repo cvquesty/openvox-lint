@@ -46,7 +46,7 @@ the lexer token types, the plugin system, and integration guidance.
 
 | Constant | Value | Description |
 |----------|-------|-------------|
-| `VERSION` | `'1.0.4'` | Gem version |
+| `VERSION` | `'1.0.8'` | Gem version |
 
 ### Class Methods
 
@@ -54,8 +54,9 @@ the lexer token types, the plugin system, and integration guidance.
 |--------|---------|-------------|
 | `.configuration` | `Configuration` | Global configuration singleton |
 | `.configure { \|c\| }` | `Configuration` | Yields configuration for block-style setup |
+| `.reset_configuration!` | `Configuration` | Reset configuration to defaults (called by CLI) |
 | `.checks` | `Hash{Symbol => Class}` | Registry of loaded check classes |
-| `.new_check(name, &block)` | `Class` | Register a new check plugin |
+| `.new_check(name, &block)` | `Class` | Register a new check plugin (warns on duplicates) |
 
 ### Exceptions
 
@@ -248,7 +249,6 @@ notify :warning,    # or :error
 | `only_checks` | `Array<Symbol>` | `[]` | Run only these checks |
 | `disabled_checks` | `Array<Symbol>` | `[]` | Skip these checks |
 | `ignore_paths` | `Array<String>` | vendor, pkg, spec | Glob patterns to ignore |
-| `config_file` | `String` | `.openvox-lint.rc` | RC file path |
 | `relative` | `Boolean` | `false` | Use relative paths |
 | `column` | `Boolean` | `true` | Show column numbers |
 | `custom_log_format` | `String\|nil` | `nil` | Custom format string |
@@ -517,20 +517,20 @@ Place the check file in `lib/openvox-lint/plugins/checks/my_check.rb`.
 
 ## File Inventory
 
-| File | Lines | Description |
-|------|-------|-------------|
-| `bin/openvox-lint` | 7 | CLI entry point |
-| `lib/openvox-lint.rb` | 47 | Main module, auto-loader |
-| `lib/openvox-lint/version.rb` | 5 | Version constant |
-| `lib/openvox-lint/configuration.rb` | 59 | Configuration management |
-| `lib/openvox-lint/token.rb` | 38 | Token data structure |
-| `lib/openvox-lint/lexer.rb` | 342 | Puppet/OpenVox lexer |
-| `lib/openvox-lint/check_plugin.rb` | 147 | Base check class |
-| `lib/openvox-lint/checks.rb` | 46 | Check runner |
-| `lib/openvox-lint/report.rb` | 86 | Output formatters |
-| `lib/openvox-lint/linter.rb` | 72 | File orchestrator |
-| `lib/openvox-lint/cli.rb` | 87 | CLI parser |
-| `lib/openvox-lint/plugins/checks/*.rb` | 38 files | Check plugins |
-| `spec/spec_helper.rb` | 41 | Test helper |
-| `spec/unit/lexer_spec.rb` | 85 | Lexer tests |
-| `spec/unit/checks_spec.rb` | 142 | Check tests |
+| File | Description |
+|------|-------------|
+| `bin/openvox-lint` | CLI entry point |
+| `lib/openvox-lint.rb` | Main module, auto-loader |
+| `lib/openvox-lint/version.rb` | Version constant |
+| `lib/openvox-lint/configuration.rb` | Configuration management |
+| `lib/openvox-lint/token.rb` | Token data structure |
+| `lib/openvox-lint/lexer.rb` | Puppet/OpenVox lexer |
+| `lib/openvox-lint/check_plugin.rb` | Base check class |
+| `lib/openvox-lint/checks.rb` | Check runner with lint:ignore support |
+| `lib/openvox-lint/report.rb` | Output formatters |
+| `lib/openvox-lint/linter.rb` | File orchestrator |
+| `lib/openvox-lint/cli.rb` | CLI parser |
+| `lib/openvox-lint/plugins/checks/*.rb` | 38 built-in check plugins |
+| `spec/spec_helper.rb` | Test helper |
+| `spec/unit/lexer_spec.rb` | Lexer tests |
+| `spec/unit/checks_spec.rb` | Check tests |

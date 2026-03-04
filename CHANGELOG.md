@@ -2,6 +2,83 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [1.0.8] - 2026-03-04
+
+### Fixed
+
+- **CLI: stale configuration on re-invocation**: The global configuration
+  singleton is now reset at the start of every `CLI#run`.  Repeated
+  invocations in the same Ruby process (Vim plugins, guard, Rake loops)
+  no longer inherit stale `disabled_checks`, `only_checks`, or other
+  settings from a previous run.
+
+- **CLI: `--config` flag ignored when local RC exists**: The `-c` /
+  `--config FILE` flag now takes strict priority.  Previously a local
+  `.openvox-lint.rc` would shadow an explicit `--config` path.
+
+- **lint:ignore / lint:endignore block suppression**: Block-style ignore
+  comments now work as documented.  `# lint:ignore:check_name` on its
+  own line opens a suppression block; `# lint:endignore` closes it.
+  All problems on lines between the two comments are suppressed for
+  the named checks.  Inline ignore comments (on the same line as code)
+  continue to work as before.
+
+- **ignore-paths glob matching with relative/absolute prefixes**: The
+  `--ignore-paths` glob patterns (and the defaults `vendor/**/*.pp`,
+  `pkg/**/*.pp`, `spec/**/*.pp`) now match correctly regardless of
+  whether the file was discovered via `./vendor/foo.pp`, `vendor/foo.pp`,
+  or an absolute path.
+
+- **trailing_comma false positives on non-resource braces**: The
+  `trailing_comma` check now only fires inside resource bodies
+  (`name { ... }`).  It no longer produces false positives on `if`,
+  `unless`, `case`, class bodies, or other brace-delimited contexts
+  where a trailing comma is not expected.
+
+- **arrow_alignment / space_before_arrow contradictory warnings**: The
+  `arrow_alignment` check now defers to `space_before_arrow` when the
+  misalignment in a group is caused by the longest key having extra
+  whitespace.  This eliminates contradictory double-warnings on the
+  same resource block.
+
+- **Unterminated strings and regex now reported as errors**: The lexer
+  now raises `OpenvoxLint::Error` when a single-quoted string,
+  double-quoted string, or regex literal is not terminated before
+  end-of-file.  Previously the lexer silently produced a truncated
+  token covering the rest of the file, leading to wrong lint results.
+
+- **Multi-line string tokens now report correct line number**: String
+  tokens that span multiple lines now record the **starting** line
+  number, not the ending line.  Checks that flag these tokens now
+  point to the correct source location.
+
+- **variables_not_enclosed mixed variable handling**: Strings containing
+  both enclosed (`${bar}`) and unenclosed (`$foo`) variables now
+  correctly flag only the unenclosed references.  Previously the
+  entire string was skipped if any `${...}` pattern was present.
+
+- **resource_reference_without_title_capital expanded allowlist**: The
+  function allowlist that prevents false positives on `name[...]`
+  patterns now covers 40+ Puppet built-in and stdlib functions
+  (`each`, `map`, `filter`, `reduce`, `lookup`, `dig`, etc.),
+  not just the original 5.
+
+### Changed
+
+- **duplicate_params / parameter_order: removed dead code**: Both checks
+  contained `.formatting?` guard clauses that could never trigger
+  because they operate on pre-filtered semantic tokens.  The dead code
+  has been removed for clarity.
+
+- **Check registry duplicate warning**: `OpenvoxLint.new_check` now
+  emits a warning to stderr (when `OPENVOX_LINT_DEBUG` is set) if a
+  check name that is already registered is overwritten.  This helps
+  detect accidental name collisions in custom check plugins.
+
+- **Gemfile cleaned up**: Removed duplicate gem declarations that were
+  listed in both the Gemfile `group` block and the gemspec
+  `add_development_dependency` entries.
+
 ## [1.0.7] - 2026-02-25
 
 ### Changed

@@ -8,9 +8,9 @@ OpenvoxLint.new_check(:duplicate_params) do
       params = res[:param_tokens]
       params.each_with_index do |tok, i|
         next unless tok.type == :NAME
-        # Check if followed by =>
+        # param_tokens are already semantic (non-formatting), so the
+        # next token is directly adjacent.
         j = i + 1
-        j += 1 while j < params.length && params[j].formatting?
         next unless j < params.length && params[j].type == :FARROW
         if seen[tok.value]
           notify :error,

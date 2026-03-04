@@ -37,7 +37,9 @@ OpenvoxLint.new_check(:legacy_facts) do
   def check
     tokens.each do |tok|
       next unless tok.type == :VARIABLE
-      name = tok.value.sub(/^\$/, '').sub(/\A::/, '')
+      # Strip leading $ and :: prefix, and any trailing : left by the
+      # lexer when a variable is used as a resource title ($fact:).
+      name = tok.value.sub(/^\$/, '').sub(/\A::/, '').chomp(':')
       next unless LEGACY_FACTS.include?(name)
       notify :warning,
         message: "legacy fact '#{name}' — use $facts['...'] structured fact instead (Puppet 8 / OpenVox 8)",

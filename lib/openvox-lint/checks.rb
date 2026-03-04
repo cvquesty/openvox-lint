@@ -30,17 +30,61 @@ module OpenvoxLint
 
     private
 
+    # Parse inline and block-style lint:ignore comments.
+    #
+    # Inline:  # lint:ignore:check_name   — suppresses on the same line
+    # Block:   # lint:ignore:check_name
+    #          ...code...
+    #          # lint:endignore            — suppresses from ignore to endignore
     def parse_ignore_comments
       results = []
+      open_blocks = []  # stack of { start_line:, checks: }
+
       @tokens.each do |tok|
         next unless tok.type == :COMMENT
-        if tok.value =~ /lint:ignore:(.+)/
-          results << { line: tok.line, checks: Regexp.last_match(1).strip.split(/\s*,\s*/) }
+
+        if tok.value =~ /lint:endignore/
+          # Close the most recent open block
+          block = open_blocks.pop
+          if block
+            block[:end_line] = tok.line
+            results << block
+          end
+        elsif tok.value =~ /lint:ignore:(.+)/
+          checks = Regexp.last_match(1).strip.split(/\s*,\s*/)
+          # If there's code on the same line before this comment, treat
+          # it as inline-only (same line).  Otherwise open a block.
+          if inline_ignore?(tok)
+            results << { start_line: tok.line, end_line: tok.line, checks: checks }
+          else
+            open_blocks.push({ start_line: tok.line, end_line: nil, checks: checks })
+          end
         elsif tok.value =~ /lint:ignore\b/
-          results << { line: tok.line, checks: [] }
+          if inline_ignore?(tok)
+            results << { start_line: tok.line, end_line: tok.line, checks: [] }
+          else
+            open_blocks.push({ start_line: tok.line, end_line: nil, checks: [] })
+          end
         end
       end
+
+      # Any unclosed blocks extend to end-of-file
+      open_blocks.each do |block|
+        block[:end_line] = Float::INFINITY
+        results << block
+      end
+
       results
+    end
+
+    # An ignore comment is "inline" if there is a non-formatting token
+    # on the same line before it (i.e. it sits at the end of a code line).
+    def inline_ignore?(comment_token)
+      @tokens.any? do |t|
+        t.line == comment_token.line &&
+          t.column < comment_token.column &&
+          !t.formatting?
+      end
     end
   end
 end

@@ -16,7 +16,7 @@ RSpec.configure do |config|
 
   # Reset configuration between tests
   config.before(:each) do
-    OpenvoxLint.instance_variable_set(:@configuration, nil)
+    OpenvoxLint.reset_configuration!
     OpenvoxLint.instance_variable_set(:@checks, nil)
     # Re-load checks
     Dir[File.join(File.dirname(__FILE__), '..', 'lib', 'openvox-lint', 'plugins', 'checks', '*.rb')].sort.each do |f|

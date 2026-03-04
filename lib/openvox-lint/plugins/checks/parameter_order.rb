@@ -8,9 +8,9 @@ OpenvoxLint.new_check(:parameter_order) do
       found_default = false
       params.each_with_index do |tok, i|
         next unless tok.type == :VARIABLE
-        # Look ahead for = (default value)
+        # param_tokens from find_keyword_indexes are already semantic
+        # (non-formatting), so the next token is directly adjacent.
         j = i + 1
-        j += 1 while j < params.length && params[j].formatting?
         has_default = j < params.length && params[j].type == :EQUALS
         if has_default
           found_default = true

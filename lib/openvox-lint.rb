@@ -29,11 +29,21 @@ module OpenvoxLint
       yield(configuration)
     end
 
+    # Reset the global configuration singleton.  Called at the start of
+    # every CLI run so that repeated invocations in the same Ruby
+    # process (Vim plugins, guard, Rake loops) start clean.
+    def reset_configuration!
+      @configuration = Configuration.new
+    end
+
     def checks
       @checks ||= {}
     end
 
     def new_check(name, &block)
+      if checks.key?(name)
+        $stderr.puts "openvox-lint: warning: check '#{name}' is already registered — overwriting" if ENV['OPENVOX_LINT_DEBUG']
+      end
       klass = Class.new(CheckPlugin, &block)
       klass.instance_variable_set(:@check_name, name)
       checks[name] = klass

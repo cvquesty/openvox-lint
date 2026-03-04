@@ -2,10 +2,6 @@
 
 source 'https://rubygems.org'
 
+# Runtime and dev dependencies are declared in openvox-lint.gemspec.
+# Bundler pulls them in automatically via the gemspec directive.
 gemspec
-
-group :development, :test do
-  gem 'rake',    '~> 13.0'
-  gem 'rspec',   '~> 3.12'
-  gem 'rubocop', '~> 1.50'
-end

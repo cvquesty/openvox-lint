@@ -7,13 +7,12 @@ module OpenvoxLint
       log_format: 'text', with_filename: true, fail_on_warnings: false,
       fix: false, only_checks: [], disabled_checks: [],
       ignore_paths: %w[vendor/**/*.pp pkg/**/*.pp spec/**/*.pp],
-      config_file: '.openvox-lint.rc', relative: false, column: true,
-      custom_log_format: nil,
+      relative: false, column: true, custom_log_format: nil,
     }.freeze
 
     attr_accessor :log_format, :with_filename, :fail_on_warnings,
                   :fix, :only_checks, :disabled_checks, :ignore_paths,
-                  :config_file, :relative, :column, :custom_log_format
+                  :relative, :column, :custom_log_format
 
     def initialize
       DEFAULTS.each do |k, v|
