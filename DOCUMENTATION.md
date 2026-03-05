@@ -46,7 +46,7 @@ the lexer token types, the plugin system, and integration guidance.
 
 | Constant | Value | Description |
 |----------|-------|-------------|
-| `VERSION` | `'1.0.8'` | Gem version |
+| `VERSION` | `'1.1.0'` | Gem version |
 
 ### Class Methods
 
@@ -530,7 +530,7 @@ Place the check file in `lib/openvox-lint/plugins/checks/my_check.rb`.
 | `lib/openvox-lint/report.rb` | Output formatters |
 | `lib/openvox-lint/linter.rb` | File orchestrator |
 | `lib/openvox-lint/cli.rb` | CLI parser |
-| `lib/openvox-lint/plugins/checks/*.rb` | 38 built-in check plugins |
+| `lib/openvox-lint/plugins/checks/*.rb` | 37 built-in check plugins |
 | `spec/spec_helper.rb` | Test helper |
 | `spec/unit/lexer_spec.rb` | Lexer tests |
 | `spec/unit/checks_spec.rb` | Check tests |

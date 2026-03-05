@@ -4,7 +4,7 @@
 [![Gem Downloads](https://img.shields.io/gem/dt/openvox-lint)](https://rubygems.org/gems/openvox-lint)
 ![Ruby](https://img.shields.io/badge/ruby-%E2%89%A5%202.5-red)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
-![Checks](https://img.shields.io/badge/built--in%20checks-38-brightgreen)
+![Checks](https://img.shields.io/badge/built--in%20checks-37-brightgreen)
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
 
 **A style-guide linter for OpenVox and Puppet manifests.**
@@ -25,7 +25,7 @@ Fully compatible with:
 - [Quick Start](#quick-start)
 - [Usage](#usage)
 - [Enabling and Disabling Checks](#enabling-and-disabling-checks)
-- [Built-in Checks (38)](#built-in-checks)
+- [Built-in Checks (37)](#built-in-checks)
 - [Configuration](#configuration)
 - [Output Formats](#output-formats)
 - [Integration](#integration)
@@ -232,13 +232,13 @@ To see every check that openvox-lint can run:
 openvox-lint --list-checks
 ```
 
-This shows the check name, severity (warning or error), and description for all 38 built-in checks.
+This shows the check name, severity (warning or error), and description for all 37 built-in checks.
 
 ---
 
 ## Built-in Checks
 
-openvox-lint ships with **38 built-in checks** organized into categories:
+openvox-lint ships with **37 built-in checks** organized into categories:
 
 ### Whitespace & Formatting (5 checks)
 
@@ -302,13 +302,12 @@ openvox-lint ships with **38 built-in checks** organized into categories:
 | `case_without_default` | warning | Case statements must have a `default` case |
 | `selector_inside_resource` | warning | Don't use selectors inside resource bodies |
 
-### References & Syntax (4 checks)
+### References & Syntax (3 checks)
 
 | Check | Severity | Description |
 |-------|----------|-------------|
 | `leading_zero` | warning | No leading zeros in numbers (except file modes) |
 | `resource_reference_without_title_capital` | warning | Capitalise resource reference types |
-| `relative_classname_inclusion` | warning | Use fully qualified class names |
 | `autoloader_layout` | warning | Class/define name must match file path |
 
 ### Comments (1 check)
@@ -621,7 +620,7 @@ openvox-lint/
 |---------|-----------------|------------------|
 | Ruby requirement | ≥ 3.1 | ≥ 2.5 (RHEL 8, macOS, all modern platforms) |
 | Runtime dependencies | None | None |
-| Built-in checks | ~25 | 38 |
+| Built-in checks | ~25 | 37 |
 | Legacy facts detection | Via plugin | Built-in |
 | Top-scope facts detection | Via plugin | Built-in |
 | Hiera 3 detection | No | Built-in (error) |

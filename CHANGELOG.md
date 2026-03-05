@@ -2,6 +2,23 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [1.1.0] - 2026-03-05
+
+### Removed
+
+- **`relative_classname_inclusion` check**: This check warned when
+  `include`, `require`, or `contain` statements used relative (non-`::`)
+  multi-segment class names instead of fully qualified ones.  Since
+  Puppet 4, the Puppet language resolver correctly handles relative class
+  name resolution, making relative class name inclusion safe and the
+  check obsolete.  The check has been removed entirely.  Users who had
+  disabled it via `--no-relative_classname_inclusion-check` or
+  `.openvox-lint.rc` can safely remove those overrides.
+
+### Changed
+
+- **Check count**: 38 → 37 built-in checks.
+
 ## [1.0.8] - 2026-03-04
 
 ### Fixed
@@ -146,7 +163,7 @@ All notable changes to openvox-lint will be documented in this file.
   - **Resources**: `ensure_first_param`, `ensure_not_symlink_target`, `file_mode`, `unquoted_file_mode`, `unquoted_resource_title`, `duplicate_params`, `trailing_comma`
   - **Classes**: `documentation`, `nested_classes_or_defines`, `parameter_order`, `class_inherits_params`, `inherits_across_namespaces`
   - **Conditionals**: `case_without_default`, `selector_inside_resource`
-  - **References**: `leading_zero`, `resource_reference_without_title_capital`, `relative_classname_inclusion`, `autoloader_layout`
+  - **References**: `leading_zero`, `resource_reference_without_title_capital`, `autoloader_layout`
   - **Comments**: `star_comments`
   - **URLs**: `puppet_url_without_modules`
   - **Nodes**: `node_name_unquoted`
