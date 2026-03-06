@@ -35,15 +35,57 @@ OpenvoxLint.new_check(:legacy_facts) do
   ].freeze
 
   def check
+    local_vars = collect_local_vars
     tokens.each do |tok|
       next unless tok.type == :VARIABLE
       # Strip leading $ and :: prefix, and any trailing : left by the
       # lexer when a variable is used as a resource title ($fact:).
       name = tok.value.sub(/^\$/, '').sub(/\A::/, '').chomp(':')
       next unless LEGACY_FACTS.include?(name)
+      next if local_vars.include?(name)
       notify :warning,
         message: "legacy fact '#{name}' — use $facts['...'] structured fact instead (Puppet 8 / OpenVox 8)",
         line: tok.line, column: tok.column
     end
+  end
+
+  private
+
+  # Collect variable names that are declared locally (class/define parameters
+  # or lambda block parameters) so they are not mistaken for legacy facts.
+  def collect_local_vars
+    local = Set.new
+    toks = tokens
+    i = 0
+    while i < toks.size
+      case toks[i].type
+      when :CLASS, :DEFINE
+        # Skip to the opening LPAREN of the parameter list (stop at LBRACE)
+        j = i + 1
+        j += 1 while j < toks.size && toks[j].type != :LPAREN && toks[j].type != :LBRACE
+        if j < toks.size && toks[j].type == :LPAREN
+          depth = 1
+          j += 1
+          while j < toks.size && depth > 0
+            case toks[j].type
+            when :LPAREN then depth += 1
+            when :RPAREN then depth -= 1
+            when :VARIABLE then local << toks[j].value.sub(/^\$/, '').sub(/\A::/, '') if depth == 1
+            end
+            j += 1
+          end
+        end
+      when :PIPE
+        # Lambda parameter list: |$var1, $var2|
+        j = i + 1
+        while j < toks.size && toks[j].type != :PIPE
+          local << toks[j].value.sub(/^\$/, '').sub(/\A::/, '') if toks[j].type == :VARIABLE
+          j += 1
+        end
+        i = j # skip past closing PIPE
+      end
+      i += 1
+    end
+    local
   end
 end
