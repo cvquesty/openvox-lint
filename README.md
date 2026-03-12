@@ -9,7 +9,7 @@
 
 **A style-guide linter for OpenVox and Puppet manifests.**
 
-openvox-lint checks your `.pp` manifest files against the [Puppet Style Guide](https://puppet.com/docs/puppet/latest/style_guide.html) and catches common errors, deprecated patterns, legacy facts, strict-mode violations, and Puppet 8+ / OpenVox 8.x language issues.
+openvox-lint checks your `.pp` manifest files against the [Puppet Language Style Guide](https://help.puppet.com/core/current/Content/PuppetCore/style_guide.htm) and catches common errors, deprecated patterns, legacy facts, strict-mode violations, and Puppet 8+ / OpenVox 8.x language issues.
 
 Fully compatible with:
 - **OpenVox 8.x** (the community-maintained open-source fork of Puppet)
