@@ -182,7 +182,7 @@ openvox-lint --no-line_length-check --no-arrow_alignment-check --no-strict_inden
 Use `--only-checks` to run *only* the checks you specify (everything else is skipped):
 
 ```bash
-# Only check for legacy facts and hiera3 usage
+# Only check for legacy facts and deprecated Hiera 3 functions
 openvox-lint --only-checks legacy_facts,hiera3_function,top_scope_facts manifests/
 
 # Only check for errors (skip all warnings)
@@ -334,7 +334,7 @@ openvox-lint ships with **37 built-in checks** organized into categories:
 |-------|----------|-------------|
 | `legacy_facts` | warning | Legacy facts removed in Puppet 8; use `$facts['...']` |
 | `top_scope_facts` | warning | `$::fact` references; use `$facts['fact']` |
-| `hiera3_function` | **error** | `hiera()` / `hiera_hash()` removed; use `lookup()` |
+| `hiera3_function` | **error** | Deprecated Hiera 3 functions removed; use Hiera 5 `lookup()` |
 | `import_statement` | **error** | `import` removed in Puppet 4+ |
 
 ---
@@ -381,7 +381,7 @@ class foo { # lint:ignore:documentation
 
 ```
 manifests/init.pp:5:15: WARNING: unquoted_file_mode: unquoted file mode
-manifests/init.pp:9:3: ERROR: hiera3_function: 'hiera()' is removed in Puppet 8
+manifests/init.pp:9:3: ERROR: hiera3_function: deprecated Hiera 3 function 'hiera()' — use Hiera 5 lookup() instead
 ```
 
 ### JSON (`-f json`)
@@ -623,7 +623,7 @@ openvox-lint/
 | Built-in checks | ~25 | 37 |
 | Legacy facts detection | Via plugin | Built-in |
 | Top-scope facts detection | Via plugin | Built-in |
-| Hiera 3 detection | No | Built-in (error) |
+| Deprecated Hiera 3 function detection | No | Built-in (error) |
 | Import statement detection | No | Built-in (error) |
 | Strict indent check | Via plugin | Built-in |
 | GitHub Actions output | No | Built-in (`-f github`) |

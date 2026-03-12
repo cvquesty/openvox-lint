@@ -2,6 +2,38 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [1.1.1] - 2026-03-12
+
+### Documentation
+
+- **Comprehensive technical documentation rewrite**: Complete overhaul of
+  [DOCUMENTATION.md](DOCUMENTATION.md) with:
+  - Full API reference for all classes (Token, Lexer, CheckPlugin, Configuration,
+    Linter, Report)
+  - Complete documentation for all 37 checks with good/bad code examples
+  - Organized checks by category (Whitespace, Strings, Variables, Resources, etc.)
+  - Comprehensive token types reference
+  - Plugin development guide with examples
+  - Migration guide from puppet-lint
+
+- **New CONTRIBUTING.md**: Added comprehensive contributor guide with:
+  - Development setup instructions
+  - Project structure documentation
+  - Testing instructions
+  - Check plugin writing guide
+  - Coding standards
+  - Release process
+
+- **Hiera 3 → Hiera 5 clarification**: Updated all documentation to clarify
+  that Hiera 3 is fully deprecated and only Hiera 5 is supported in Puppet 8 /
+  OpenVox 8. The `hiera3_function` check now explicitly references "Hiera 5
+  lookup()" as the replacement.
+
+### Changed
+
+- **`hiera3_function` error message**: Improved to explicitly mention Hiera 5:
+  "deprecated Hiera 3 function 'hiera()' — use Hiera 5 lookup() instead"
+
 ## [1.1.0] - 2026-03-05
 
 ### Removed
