@@ -2,6 +2,33 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [1.2.0] - 2026-03-12
+
+### Fixed
+
+- **`legacy_facts` false positives on local variables** — The check no longer
+  flags class/define parameters or lambda block parameters that happen to share
+  names with legacy facts (`$path`, `$type`, `$os`, etc.). Previously, any
+  variable with a legacy fact name would trigger a warning, even when it was
+  clearly a locally-scoped parameter with no relation to facts.
+
+  **Contributed by [@hbro](https://github.com/hbro) (Hans Broeckx)** in
+  [PR #1](https://github.com/cvquesty/openvox-lint/pull/1). This is openvox-lint's
+  first community contribution! 🎉
+
+  The fix adds a pre-scan phase that collects all locally declared variable names
+  from:
+  - Class and defined type parameter lists
+  - Lambda block parameter lists (`|$var|`)
+
+  These local variables are then excluded from the legacy fact name check,
+  eliminating false positives while still correctly detecting actual legacy
+  fact references.
+
+### Contributors
+
+- **Hans Broeckx ([@hbro](https://github.com/hbro))** — First community contributor!
+
 ## [1.1.1] - 2026-03-12
 
 ### Documentation

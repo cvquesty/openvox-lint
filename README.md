@@ -33,6 +33,7 @@ Fully compatible with:
 - [Updating](#updating)
 - [Uninstalling](#uninstalling)
 - [Development](#development)
+- [Contributors](#contributors)
 - [License](#license)
 
 ---
@@ -648,6 +649,16 @@ openvox-lint/
 Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
 
 ---
+
+## Contributors
+
+Thanks to the following people for their contributions to openvox-lint:
+
+| Contributor | Contribution |
+|-------------|--------------|
+| **[@hbro](https://github.com/hbro)** (Hans Broeckx) | Fixed `legacy_facts` false positives on local variables ([PR #1](https://github.com/cvquesty/openvox-lint/pull/1)) — *First community contribution!* 🎉 |
+
+Want to contribute? See [CONTRIBUTING.md](CONTRIBUTING.md) to get started!
 
 ## Author
 
