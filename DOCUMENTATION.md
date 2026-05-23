@@ -10,8 +10,8 @@ reported in multiple output formats suitable for humans, CI systems, and IDEs.
 This document covers the architecture, every public API, every built-in check,
 the lexer token types, the plugin system, and integration guidance.
 
-**Version:** 1.1.1  
-**Checks:** 37 built-in  
+**Version:** 1.3.0  
+**Checks:** 37 built-in (with real --fix support for 5+ checks)  
 **License:** Apache 2.0  
 **Compatibility:** OpenVox 8.x, Puppet 8.x, Puppet 7.x (with deprecation warnings)
 
@@ -94,7 +94,7 @@ The top-level namespace for all openvox-lint classes.
 
 | Constant | Value | Description |
 |----------|-------|-------------|
-| `VERSION` | `'1.1.0'` | Gem version string |
+| `VERSION` | `'1.3.0'` | Gem version string |
 
 #### Class Methods
 

@@ -42,6 +42,24 @@ module OpenvoxLint
         fullpath: filepath, configuration: @config,
       )
       @problems.concat(checker.run)
+
+      # Apply --fix: checks' #fix methods (if implemented) mutate the shared
+      # manifest_lines array in place. After all checks, write the (possibly
+      # fixed) content back if it differs. This makes --fix functional for
+      # supported checks. Ensures final newline per style guide.
+      if @config.fix
+        begin
+          fixed_code = lexer.manifest_lines.join("\n") + "\n"
+          if fixed_code != code
+            File.write(filepath, fixed_code)
+          end
+        rescue StandardError => write_err
+          @problems << {
+            path: filepath, line: 0, column: 0, kind: :error,
+            check: :fix, message: "Failed to write fixes: #{write_err.message}",
+          }
+        end
+      end
     rescue StandardError => e
       @problems << {
         path: filepath, line: 0, column: 0, kind: :error,

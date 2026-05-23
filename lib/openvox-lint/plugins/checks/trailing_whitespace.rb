@@ -11,4 +11,10 @@ OpenvoxLint.new_check(:trailing_whitespace) do
         column: line.rstrip.length + 1
     end
   end
+
+  # --fix support: strip trailing whitespace from the offending line.
+  def fix(problem)
+    idx = problem[:line] - 1
+    @manifest_lines[idx] = @manifest_lines[idx].rstrip
+  end
 end

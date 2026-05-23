@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'set'
+
 # Legacy (unstructured) top-scope facts are removed in Puppet 8 / OpenVox 8.
 # Use structured facts via $facts hash instead.
 #

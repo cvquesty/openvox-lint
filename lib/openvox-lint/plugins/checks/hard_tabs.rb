@@ -12,4 +12,11 @@ OpenvoxLint.new_check(:hard_tabs) do
         column: col + 1
     end
   end
+
+  # --fix support: replace all hard tabs with two spaces (simple but effective
+  # for consistent soft-tab style; more sophisticated indent fixers exist).
+  def fix(problem)
+    idx = problem[:line] - 1
+    @manifest_lines[idx] = @manifest_lines[idx].gsub("\t", '  ')
+  end
 end

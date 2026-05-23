@@ -2,6 +2,30 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [1.3.0] - 2026-05-23
+
+### Fixed / Production Readiness
+
+- **Real `--fix` support implemented** for 5 high-value checks (previously non-functional scaffolding only; all 37 raised `NoFix`):
+  - `trailing_whitespace` — strips trailing ws from lines
+  - `hard_tabs` — replaces `\t` with two spaces
+  - `quoted_booleans` — unquotes `true`/`false` values
+  - `double_quoted_strings` — converts unnecessary `"...` (no interp/escapes) to `'...`
+  - `single_quote_string_with_variables` — converts `'...$var...` to `"...$var...`
+  - Linter now writes mutated `manifest_lines` back to disk on `--fix` (with final-NL normalization per style guide). Fixes are line-based and safe; complex structural fixes (arrow_alignment) remain future work. Tested on real manifests.
+- **`legacy_facts` crash fixed** (in active workspace): `require 'set'` present + exclusion logic for local class/define params and `|$var|` lambdas fully verified (no false positives, no NameError).
+- Removed committed stale `openvox-lint-1.0.8.gem` (violated `.gitignore`).
+- **Version/doc sync**: All references now 1.3.0 (source, docs header, comparison table, this changelog). Bumped for the --fix + hygiene milestone.
+- Updated README links and comparison to point to canonical OpenVox style guide and note real --fix status.
+- Architecture decision: retained OpenVox's lightweight `CheckPlugin` + depth-aware helpers (superior to puppet-lint Data for some cases); added minimal mutation support for fixes without porting heavy token-rewiring singleton.
+
+### Changed
+- `--fix` now production-usable for the listed checks (edits in place like puppet-lint).
+- Style guide references prioritize OpenVox canonical docs.
+
+### Contributors (for 1.3.0)
+- Grok Build (lead modernization per full analysis reports)
+
 ## [1.2.0] - 2026-03-12
 
 ### Fixed

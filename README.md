@@ -9,7 +9,7 @@
 
 **A style-guide linter for OpenVox and Puppet manifests.**
 
-openvox-lint checks your `.pp` manifest files against the [Puppet Language Style Guide](https://help.puppet.com/core/current/Content/PuppetCore/style_guide.htm) and catches common errors, deprecated patterns, legacy facts, strict-mode violations, and Puppet 8+ / OpenVox 8.x language issues.
+openvox-lint checks your `.pp` manifest files against the [OpenVox Language Style Guide](https://docs.openvoxproject.org/openvox/latest/style_guide.html) (and Puppet equivalent) and catches common errors, deprecated patterns, legacy facts, strict-mode violations, and Puppet 8+ / OpenVox 8.x language issues.
 
 Fully compatible with:
 - **OpenVox 8.x** (the community-maintained open-source fork of Puppet)
@@ -159,6 +159,27 @@ openvox-lint -f github manifests/
 # Fail CI on warnings too
 openvox-lint --fail-on-warnings manifests/
 ```
+
+### Fix mode (`--fix`)
+
+`--fix` automatically corrects problems for the checks that implement fix logic. Fixes are applied in-place and are safe for the supported cases.
+
+Currently supported checks:
+- `trailing_whitespace` — removes trailing spaces/tabs
+- `hard_tabs` — converts tabs to two spaces
+- `quoted_booleans` — changes `'true'` / `'false'` (strings) to unquoted booleans
+- `double_quoted_strings` — converts unnecessary double-quoted strings (no interpolation or escapes) to single quotes
+- `single_quote_string_with_variables` — converts single-quoted strings containing `$variables` to double quotes so interpolation works
+
+Example:
+
+```bash
+openvox-lint --fix manifests/
+# or
+openvox-lint --fix .
+```
+
+After running, re-lint to confirm. Complex structural fixes (e.g. arrow alignment) are not yet implemented.
 
 ---
 
@@ -617,7 +638,7 @@ openvox-lint/
 
 ## Comparison with puppet-lint
 
-| Feature | puppet-lint 5.x | openvox-lint 1.0 |
+| Feature | puppet-lint 5.x | openvox-lint 1.3.0 |
 |---------|-----------------|------------------|
 | Ruby requirement | ≥ 3.1 | ≥ 2.5 (RHEL 8, macOS, all modern platforms) |
 | Runtime dependencies | None | None |
@@ -633,7 +654,7 @@ openvox-lint/
 | Custom log format | Yes | Yes (compatible) |
 | OpenVox awareness | No | Yes |
 | Plugin system | Yes | Yes (compatible) |
-| `--fix` support | Yes | Yes |
+| `--fix` support | Yes | Yes (real implementations for trailing_whitespace, hard_tabs, quoted_booleans, double_quoted_strings, single_quote_string_with_variables + line-based) |
 | vim-openvox integration | No | Native |
 
 ---
