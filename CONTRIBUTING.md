@@ -353,11 +353,11 @@ We follow [Semantic Versioning](https://semver.org/):
 1. Update `lib/openvox-lint/version.rb`
 2. Update `CHANGELOG.md` with release date
 3. Update check count in README.md and DOCUMENTATION.md
-4. Commit: `git commit -m "chore: release v1.3.1"`
-5. Tag: `git tag v1.3.1`
+4. Commit: `git commit -m "chore: release v1.3.2"`
+5. Tag: `git tag v1.3.2`
 6. Push: `git push origin development --tags`
 7. Build gem: `gem build openvox-lint.gemspec`
-8. Publish: `gem push openvox-lint-1.3.1.gem`
+8. Publish: `gem push openvox-lint-1.3.2.gem`
 
 ---
 

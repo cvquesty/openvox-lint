@@ -92,6 +92,21 @@ module OpenvoxLint
       results = []; i = 0; sem = semantic_tokens
       while i < sem.length
         if sem[i].type == :NAME && i + 1 < sem.length && sem[i + 1].type == :LBRACE
+          # Skip NAME { that belong to class/define/node bodies rather than
+          # actual resources. This prevents inner statements (including other
+          # resources) from being treated as parameters of the class itself.
+          k = i - 1
+          while k >= 0
+            t = sem[k]
+            break if t.type == :CLASS || t.type == :DEFINE || t.type == :NODE
+            break unless t.formatting?
+            k -= 1
+          end
+          if k >= 0 && [:CLASS, :DEFINE, :NODE].include?(sem[k].type)
+            i += 1
+            next
+          end
+
           rtype = sem[i]; brace = i + 1; depth = 1; j = brace + 1; params = []
           while j < sem.length && depth > 0
             case sem[j].type

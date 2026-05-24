@@ -2,6 +2,11 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [1.3.2] - 2026-05-24
+
+### Fixed
+- Strengthened resource detection logic in `compute_resource_indexes` to reliably exclude `class`/`define`/`node` bodies. This prevents multiple checks (especially `trailing_comma`) from incorrectly treating statements inside classes as resource attributes.
+
 ## [1.3.1] - 2026-05-23
 
 ### Fixed
