@@ -1,4 +1,6 @@
-# openvox-lint Modernization Update Summary (1.3.0)
+# openvox-lint Modernization Update Summary (targeted 1.3.0, released as 1.3.1)
+
+> Note: Due to RubyGems not allowing re-publication of the same version, the actual first public release containing this work is **1.3.1**.
 
 **Date:** 2026-05-23  
 **Workspace:** /Users/jsheets/workspace/OpenVox/openvox-lint (active git root)  
@@ -55,7 +57,7 @@
 
 ### 6. Packaging & Release Prep (Phase 6)
 - `gem build openvox-lint.gemspec` clean (1.3.0, no warnings blocking, files match gemspec). Temp gem removed.
-- Version: lib/version.rb=1.3.0 (dynamic in gemspec).
+- Version: lib/version.rb=1.3.1 (dynamic in gemspec) for the actual release.
 - CHANGELOG detailed (above).
 - Verify: `ruby -Ilib bin/openvox-lint --list-checks` (37+), --version, --help, --fix all functional. No old gem.
 
@@ -74,7 +76,7 @@
 - `lib/openvox-lint/plugins/checks/quoted_booleans.rb:20` (fix + col-aware)
 - `lib/openvox-lint/plugins/checks/double_quoted_strings.rb:30` (fix +)
 - `lib/openvox-lint/plugins/checks/single_quote_string_with_variables.rb:19` (fix +)
-- `lib/openvox-lint/version.rb:4` (1.3.0)
+- `lib/openvox-lint/version.rb:4` (1.3.1 for release)
 - `README.md`, `DOCUMENTATION.md`, `CHANGELOG.md` (docs/version)
 - Removed: openvox-lint-1.0.8.gem, Gemfile.lock
 

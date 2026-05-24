@@ -638,7 +638,7 @@ openvox-lint/
 
 ## Comparison with puppet-lint
 
-| Feature | puppet-lint 5.x | openvox-lint 1.3.0 |
+| Feature | puppet-lint 5.x | openvox-lint 1.3.1 |
 |---------|-----------------|------------------|
 | Ruby requirement | ≥ 3.1 | ≥ 2.5 (RHEL 8, macOS, all modern platforms) |
 | Runtime dependencies | None | None |

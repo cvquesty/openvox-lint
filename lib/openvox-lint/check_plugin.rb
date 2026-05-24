@@ -141,6 +141,12 @@ module OpenvoxLint
       results = []; sem = semantic_tokens
       sem.each_with_index do |tok, i|
         if tok.type == :LBRACE && i > 0 && sem[i - 1].type == :NAME
+          # Skip the opening brace of class/define/node bodies.
+          # Their name token before { is not a resource type; the next
+          # statement (often another resource) would otherwise be
+          # misinterpreted as an "unquoted resource title".
+          next if i >= 2 && [:CLASS, :DEFINE, :NODE].include?(sem[i-2]&.type)
+
           j = i + 1
           results << sem[j] if j < sem.length && %i[SSTRING STRING NAME VARIABLE].include?(sem[j].type)
         end

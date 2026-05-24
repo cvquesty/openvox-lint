@@ -43,27 +43,40 @@ module OpenvoxLint
       @tokens.each do |tok|
         next unless tok.type == :COMMENT
 
-        if tok.value =~ /lint:endignore/
+        comment_text = tok.value.to_s
+
+        if comment_text =~ /lint:endignore/i
           # Close the most recent open block
           block = open_blocks.pop
           if block
             block[:end_line] = tok.line
             results << block
           end
-        elsif tok.value =~ /lint:ignore:(.+)/
-          checks = Regexp.last_match(1).strip.split(/\s*,\s*/)
+        elsif comment_text =~ /lint:ignore/i
+          # Robust extraction: find every "lint:ignore:" and take the following name(s)
+          # until the next "lint:" directive or end of comment.
+          checks = []
+          text = comment_text
+          while (idx = text.index(/lint:ignore:/i))
+            # Take from after this directive until the next directive or end
+            remaining = text[idx + 'lint:ignore:'.length .. -1]
+            next_dir = remaining.index(/lint:/i) || remaining.length
+            chunk = remaining[0...next_dir]
+            checks += chunk.split(/[,\s]+/).map { |s| s.strip.tr('-', '_').downcase }.reject(&:empty?)
+            # Advance past this directive for the next search
+            text = text[idx + 1 .. -1] || ''
+          end
+          checks.uniq!
+          if comment_text =~ /lint:ignore(?!\s*:)/i && checks.empty?
+            checks = []
+          end
+
           # If there's code on the same line before this comment, treat
           # it as inline-only (same line).  Otherwise open a block.
           if inline_ignore?(tok)
             results << { start_line: tok.line, end_line: tok.line, checks: checks }
           else
             open_blocks.push({ start_line: tok.line, end_line: nil, checks: checks })
-          end
-        elsif tok.value =~ /lint:ignore\b/
-          if inline_ignore?(tok)
-            results << { start_line: tok.line, end_line: tok.line, checks: [] }
-          else
-            open_blocks.push({ start_line: tok.line, end_line: nil, checks: [] })
           end
         end
       end

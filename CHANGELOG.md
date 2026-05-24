@@ -2,6 +2,14 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [1.3.1] - 2026-05-23
+
+### Fixed
+- Critical false positive in `unquoted_resource_title`: resource types (e.g. `file`) inside `class { ... }` or `define { ... }` bodies were incorrectly reported as unquoted titles.
+- `lint:ignore` parser now correctly handles multiple `lint:ignore:check` directives on a single comment line (space or comma separated) and bare `lint:ignore`.
+- Added comprehensive regression tests for the above fixes plus real `--fix` verification for the five supported checks.
+- Expanded unit test coverage across many previously untested checks and edge cases (legacy facts in lambdas/parameters, etc.).
+
 ## [1.3.0] - 2026-05-23
 
 ### Fixed / Production Readiness
@@ -15,7 +23,7 @@ All notable changes to openvox-lint will be documented in this file.
   - Linter now writes mutated `manifest_lines` back to disk on `--fix` (with final-NL normalization per style guide). Fixes are line-based and safe; complex structural fixes (arrow_alignment) remain future work. Tested on real manifests.
 - **`legacy_facts` crash fixed** (in active workspace): `require 'set'` present + exclusion logic for local class/define params and `|$var|` lambdas fully verified (no false positives, no NameError).
 - Removed committed stale `openvox-lint-1.0.8.gem` (violated `.gitignore`).
-- **Version/doc sync**: All references now 1.3.0 (source, docs header, comparison table, this changelog). Bumped for the --fix + hygiene milestone.
+- **Version/doc sync**: All references now 1.3.1 (source, docs header, comparison table, this changelog). Bumped for the --fix + hygiene milestone.
 - Updated README links and comparison to point to canonical OpenVox style guide and note real --fix status.
 - Architecture decision: retained OpenVox's lightweight `CheckPlugin` + depth-aware helpers (superior to puppet-lint Data for some cases); added minimal mutation support for fixes without porting heavy token-rewiring singleton.
 
@@ -23,7 +31,7 @@ All notable changes to openvox-lint will be documented in this file.
 - `--fix` now production-usable for the listed checks (edits in place like puppet-lint).
 - Style guide references prioritize OpenVox canonical docs.
 
-### Contributors (for 1.3.0)
+### Contributors (for 1.3.0 modernization)
 - Grok Build (lead modernization per full analysis reports)
 
 ## [1.2.0] - 2026-03-12
