@@ -121,7 +121,7 @@ RSpec.describe 'Built-in checks' do
 
   describe ':star_comments' do
     it 'flags star comments' do
-      problems = lint("#***************\n", checks: %w[star_comments])
+      problems = lint("/* *************** */\n", checks: %w[star_comments])
       expect(problems.size).to eq(1)
     end
   end

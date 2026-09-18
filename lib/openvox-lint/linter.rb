@@ -51,7 +51,7 @@ module OpenvoxLint
         begin
           fixed_code = lexer.manifest_lines.join("\n") + "\n"
           if fixed_code != code
-            File.write(filepath, fixed_code)
+            write_fixed_file(filepath, fixed_code)
           end
         rescue StandardError => write_err
           @problems << {
@@ -65,6 +65,42 @@ module OpenvoxLint
         path: filepath, line: 0, column: 0, kind: :error,
         check: :syntax, message: "Could not parse file: #{e.message}",
       }
+    end
+
+    # Single choke point for --fix writes: never follow a symlink (leaf or
+    # any path component) and open with O_NOFOLLOW when the platform provides it.
+    def write_fixed_file(filepath, content)
+      if symlink_in_path?(filepath)
+        @problems << {
+          path: filepath, line: 0, column: 0, kind: :error,
+          check: :fix,
+          message: "Refusing to write fixes: #{filepath} is a symbolic link or has a symlink path component",
+        }
+        return
+      end
+
+      flags = File::WRONLY | File::TRUNC
+      flags |= File::NOFOLLOW if defined?(File::NOFOLLOW)
+      File.open(filepath, flags) { |f| f.write(content) }
+    rescue Errno::ELOOP, Errno::EMLINK
+      @problems << {
+        path: filepath, line: 0, column: 0, kind: :error,
+        check: :fix,
+        message: "Refusing to write fixes: #{filepath} is a symbolic link or has a symlink path component",
+      }
+    end
+
+    def symlink_in_path?(filepath)
+      return true if File.symlink?(filepath)
+
+      # Walk each component so a symlink directory cannot redirect the write.
+      path = File.expand_path(filepath)
+      current = path.start_with?(File::SEPARATOR) ? File::SEPARATOR : nil
+      path.split(File::SEPARATOR).reject(&:empty?).each do |part|
+        current = current.nil? ? part : File.join(current, part)
+        return true if File.symlink?(current)
+      end
+      false
     end
 
     def expand_files(fileargs)

@@ -12,8 +12,12 @@ module OpenvoxLint
     def run
       OpenvoxLint.reset_configuration!
       @config = OpenvoxLint.configuration
-      parse_options
+      # Precedence: defaults < user RC < project RC < CLI. Load RC first so
+      # OptionParser overrides it. --config is peeked so an explicit file is
+      # used during that load; --fix from RC is ignored (see Configuration).
+      @explicit_config_file = peek_explicit_config_file
       load_rc_file
+      parse_options
       if @list_checks
         list_checks; return 0
       end
@@ -34,7 +38,7 @@ module OpenvoxLint
         opts.on('--version', 'Display version') { puts "openvox-lint #{VERSION}"; exit 0 }
         opts.on('-f', '--format FORMAT', 'Output format: text json csv github codeclimate') { |f| @config.log_format = f }
         opts.on('--log-format FORMAT', 'Custom log format string') { |f| @config.custom_log_format = f; @config.log_format = 'custom' }
-        opts.on('--fix', 'Automatically fix problems') { @config.fix = true }
+        opts.on('--[no-]fix', 'Automatically fix problems (CLI only; RC cannot enable)') { |v| @config.fix = v }
         opts.on('--fail-on-warnings', 'Exit 1 on warnings') { @config.fail_on_warnings = true }
         opts.on('--no-filename', 'Suppress filename') { @config.with_filename = false }
         opts.on('--no-column', 'Suppress column') { @config.column = false }
@@ -59,18 +63,28 @@ module OpenvoxLint
       @args.replace(remaining)
     end
 
+    def peek_explicit_config_file
+      @args.each_with_index do |arg, idx|
+        if ['-c', '--config'].include?(arg)
+          return @args[idx + 1]
+        elsif arg.start_with?('--config=')
+          return arg.split('=', 2).last
+        end
+      end
+      nil
+    end
+
     def load_rc_file
-      # Priority: explicit --config flag > local .openvox-lint.rc > ~/.openvox-lint.rc
-      # An explicit --config flag must always win.  The default value of
-      # config_file is nil until the user passes -c / --config.
+      # Precedence: defaults < ~/.openvox-lint.rc (user) < .openvox-lint.rc
+      # (project) < CLI. An explicit --config / -c file replaces the RC chain.
       candidates = if @explicit_config_file
                      [@explicit_config_file]
                    else
-                     ['.openvox-lint.rc', File.expand_path('~/.openvox-lint.rc')]
+                     [File.expand_path('~/.openvox-lint.rc'), '.openvox-lint.rc']
                    end
       candidates.each do |path|
         next unless path && File.exist?(path)
-        @config.load_from_rc(path); break
+        @config.load_from_rc(path)
       end
     end
 
