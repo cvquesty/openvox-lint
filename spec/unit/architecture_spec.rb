@@ -16,7 +16,7 @@ RSpec.describe 'Architecture contracts' do
       expect(OpenvoxLint.checks).to have_key(:trailing_whitespace)
     end
 
-    it 'warns even when OPENVOX_LINT_DEBUG is unset (not only when set)' do
+    it 'still warns when OPENVOX_LINT_DEBUG is set' do
       ENV['OPENVOX_LINT_DEBUG'] = '1'
       expect do
         OpenvoxLint.new_check(:hard_tabs) do
