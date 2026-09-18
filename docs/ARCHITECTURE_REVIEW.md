@@ -1,9 +1,9 @@
 # Architecture Review — openvox-lint
 
-**Subject:** tip `2facd76` (`chore(release): prepare v1.3.2 for publishing`) plus the remediations in this document's companion PR.
+**Subject:** tip `2facd76` plus this PR's remediations, rebased onto `development` after #6 (Ruby/CI matrix), #7 (fail-closed paths), #9 (release checklist), and #12 (RC/`--fix`/GHA/symlink).
 **Default branch:** `development`
-**Review date:** 2026-09-18
-**Scope:** Architecture-owned findings only. Security CLI/RC/`--fix` precedence, symlink `File.write`, `format_github` sanitization, Ruby-version/CI honesty, fail-closed paths, issues #3 and #5, and `--relative` implement-or-remove are owned by sibling slices and are cited here only as design drift.
+**Review date:** 2026-09-18 (rebase note same day)
+**Scope:** Architecture-owned findings only. Sibling security/systems work is now on `development` and is not re-litigated here. Remaining sibling-owned drift (`--relative`, issues #3 and #5, fail-closed unknown `-f`) is cited only as context.
 
 Severity scale:
 
@@ -168,7 +168,7 @@ Remaining extensibility limits (not changed here):
 ### F12. Semver process is documented; some historical notes overclaim — **Low** — **Partially remediated**
 
 - **Evidence:** `CONTRIBUTING.md` "Releasing" requires bumping `OpenvoxLint::VERSION` (`lib/openvox-lint/version.rb`, currently `1.3.2`), `CHANGELOG.md`, and check counts. `[1.3.0]` says "All references now 1.3.1" (version-skid from the 1.3.0→1.3.1 republish; `UPDATE_SUMMARY.md` explains it). `[1.0.0]` claimed EPP tokenization (corrected in this PR). `[1.0.8]` documented the debug-gated duplicate warning (superseded by Unreleased).
-- **Recommendation:** Add an `[Unreleased]` section for architecture work (done). Do not rewrite unrelated historical narrative. Sibling release notes should not collide with this Unreleased block.
+- **Recommendation:** Add an `[Unreleased]` section for architecture work (done). Do not rewrite unrelated historical narrative. Combined with sibling `[Unreleased]` Security notes after rebase onto #9/#12.
 
 ### F13. Gemspec `--fix` "many checks" — **Low** — **Remediated here**
 
@@ -206,11 +206,24 @@ Remaining extensibility limits (not changed here):
 
 ---
 
-## Deferred to sibling slices (do not implement here)
+## Sibling slices (do not re-implement here)
 
-| Slice | Topics |
-|-------|--------|
-| Security cloud agent | RC vs CLI-only `--fix` precedence; no-follow / symlink `File.write`; `format_github` sanitization |
-| Systems local | Ruby version honesty vs CI matrix; fail-closed missing paths; issue #3 `variable_is_lowercase` + specs; issue #5 heredoc lexer raise / junk-after-end-tag + specs; `--relative` implement-or-remove; fail-closed unknown `-f`; docs 38→37 if they already landed it |
+Landed on `development` before this rebase:
 
-Related drift called out above but not owned here: F6/F10 (`--relative`), CI/Ruby floor mismatch, `Linter#expand_files` silently skipping missing paths, `Report#format` falling through unknown formats to text.
+| Slice | PR | Topics now on `development` |
+|-------|-----|-----------------------------|
+| Security | #12 | RC cannot enable `--fix` (CLI `--[no-]fix`); no-follow / symlink `File.write`; `format_github` sanitization; CSV field escaping |
+| Systems | #6 | Ruby 2.5-safe ranges + expanded CI matrix |
+| Systems | #7 | Fail-closed `Linter#expand_files` on missing/empty inputs |
+| Systems | #9 | Release checklist: git tag + gem + GitHub Release |
+
+Still sibling-owned / open (not in this PR):
+
+| Topic | Notes |
+|-------|-------|
+| `--relative` implement-or-remove | F6/F10 — flag still stored, never read |
+| Issue #3 `variable_is_lowercase` | Not in this slice |
+| Issue #5 heredoc lexer raise / junk-after-end-tag | Not in this slice |
+| Fail-closed unknown `-f` | `Report#format` still falls through to text |
+
+Related drift called out above but not owned here: F6/F10 (`--relative`), fail-closed unknown `-f`.
