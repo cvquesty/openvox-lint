@@ -4,6 +4,9 @@ All notable changes to openvox-lint will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- **Ruby floor is ≥ 2.6.0.** Ruby 2.5 is no longer claimed. Development `rubocop ~> 1.50` requires Ruby ≥ 2.6, so CI cannot honestly test 2.5. Matrix remains `2.6` and `3.1`–`3.3`.
+
 ### Security
 - GitHub Actions annotations (`-f github`) now sanitize path and message values (newlines, `%0A`/`%0D`, and `::`) so untrusted lint output cannot inject workflow commands.
 - RC files can no longer enable destructive `--fix`. Precedence is defaults < user RC < project RC < CLI; pass `--fix` on the CLI to enable, or `--no-fix` to disable.

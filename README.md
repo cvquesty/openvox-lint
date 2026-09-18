@@ -2,7 +2,7 @@
 
 [![Gem Version](https://img.shields.io/gem/v/openvox-lint)](https://rubygems.org/gems/openvox-lint)
 [![Gem Downloads](https://img.shields.io/gem/dt/openvox-lint)](https://rubygems.org/gems/openvox-lint)
-![Ruby](https://img.shields.io/badge/ruby-%E2%89%A5%202.5-red)
+![Ruby](https://img.shields.io/badge/ruby-%E2%89%A5%202.6-red)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 ![Checks](https://img.shields.io/badge/built--in%20checks-37-brightgreen)
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
@@ -42,8 +42,8 @@ Fully compatible with:
 
 | Requirement | Version | Notes |
 |------------|---------|-------|
-| **Ruby** | ≥ 2.5.0 | Required; check with `ruby --version`. Works with macOS system Ruby (2.6), RHEL 8 system Ruby (2.5), and all newer versions. |
-| **RubyGems** | ≥ 2.0 | Included with Ruby 2.5+ |
+| **Ruby** | ≥ 2.6.0 | Required; check with `ruby --version`. Works with macOS system Ruby (2.6) and all newer versions. Ruby 2.5 is no longer claimed (dev dependency `rubocop ~> 1.50` needs ≥ 2.6). |
+| **RubyGems** | ≥ 2.0 | Included with Ruby 2.6+ |
 | **Bundler** | ≥ 2.0 | `gem install bundler` if not present |
 | **OpenVox or Puppet** | 8.x | Optional; openvox-lint works standalone without an agent |
 | **Git** | ≥ 2.0 | For installation from source |
@@ -670,7 +670,7 @@ Snapshot as of 2026-09-18 against [puppetlabs/puppet-lint `main` README and `lib
 
 | Feature | puppet-lint (current `main`) | openvox-lint 1.3.2 |
 |---------|------------------------------|--------------------|
-| Ruby requirement | Documented for Puppet 7/8 environments (typically ≥ 3.1 in 5.x) | ≥ 2.5 as declared in this gemspec |
+| Ruby requirement | Documented for Puppet 7/8 environments (typically ≥ 3.1 in 5.x) | ≥ 2.6 as declared in this gemspec |
 | Runtime dependencies | None | None |
 | Built-in checks | Core style set plus built-in `legacy_facts` / `top_scope_facts` (including YAML facts) | 37 `.pp` checks |
 | Legacy facts detection | Built-in (not plugin-only) | Built-in |

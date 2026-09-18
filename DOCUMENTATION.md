@@ -1625,7 +1625,7 @@ Snapshot as of 2026-09-18 against [puppetlabs/puppet-lint `main`](https://github
 
 | Feature | puppet-lint (current `main`) | openvox-lint 1.x |
 |---------|------------------------------|------------------|
-| Ruby requirement | Documented for Puppet 7/8 environments (typically ≥ 3.1 in 5.x) | ≥ 2.5 as declared in this gemspec |
+| Ruby requirement | Documented for Puppet 7/8 environments (typically ≥ 3.1 in 5.x) | ≥ 2.6 as declared in this gemspec |
 | Runtime dependencies | None | None |
 | Built-in checks | Core style set plus built-in fact checks (including YAML) | 37 `.pp` checks |
 | Legacy facts detection | Built-in | Built-in |

@@ -21,13 +21,13 @@ Gem::Specification.new do |spec|
     and single_quote_string_with_variables.
 
     Fully compatible with OpenVox 8.x and Puppet 8.x. Drop-in replacement for
-    the archived puppet-lint with better Ruby 2.5+ support and OpenVox-specific
+    the archived puppet-lint with Ruby 2.6+ support and OpenVox-specific
     checks.
   DESC
   spec.homepage      = 'https://github.com/cvquesty/openvox-lint'
   spec.license       = 'Apache-2.0'
 
-  spec.required_ruby_version = '>= 2.5.0'
+  spec.required_ruby_version = '>= 2.6.0'
 
   spec.metadata = {
     'homepage_uri'    => spec.homepage,
