@@ -130,6 +130,7 @@ Options:
     -f, --format FORMAT          Output format: text, json, csv, github, codeclimate
     --log-format FORMAT          Custom log format string
     --fix                        Automatically fix problems where possible
+    --no-fix                     Do not automatically fix problems (overrides --fix)
     --fail-on-warnings           Exit with error code on warnings
     --no-filename                Suppress filename in output
     --no-column                  Suppress column number in output
@@ -162,7 +163,7 @@ openvox-lint --fail-on-warnings manifests/
 
 ### Fix mode (`--fix`)
 
-`--fix` automatically corrects problems for the checks that implement fix logic. Fixes are applied in-place and are safe for the supported cases.
+`--fix` automatically corrects problems for the checks that implement fix logic. Fixes are applied in-place and are safe for the supported cases. `--fix` must be passed on the command line; an RC file cannot enable it. `--no-fix` disables fix mode. Writes are refused when the target path is a symbolic link.
 
 Currently supported checks:
 - `trailing_whitespace` — removes trailing spaces/tabs
@@ -380,6 +381,8 @@ Create `.openvox-lint.rc` in your project root or `~/.openvox-lint.rc`:
 
 # Ignore paths
 --ignore-paths vendor/**/*.pp,pkg/**/*.pp
+
+# --fix in an RC file is ignored; pass --fix on the CLI to enable writes
 ```
 
 ### Inline Ignore Comments

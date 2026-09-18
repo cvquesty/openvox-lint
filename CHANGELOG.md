@@ -2,6 +2,14 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+## [Unreleased]
+
+### Security
+- GitHub Actions annotations (`-f github`) now sanitize path and message values (newlines, `%0A`/`%0D`, and `::`) so untrusted lint output cannot inject workflow commands.
+- RC files can no longer enable destructive `--fix`. Precedence is defaults < user RC < project RC < CLI; pass `--fix` on the CLI to enable, or `--no-fix` to disable.
+- `--fix` refuses to write if the target path is a symlink or any path component is a symlink, and opens with `O_NOFOLLOW` when available.
+- CSV output now escapes fields that contain commas, quotes, or newlines.
+
 ## [1.3.2] - 2026-05-24
 
 ### Fixed

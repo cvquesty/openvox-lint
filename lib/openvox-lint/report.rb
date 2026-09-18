@@ -42,15 +42,25 @@ module OpenvoxLint
     def format_csv(problems, io)
       io.puts 'path,line,column,kind,check,message'
       problems.each do |p|
-        io.puts [p[:path], p[:line], p[:column], p[:kind], p[:check],
-                 %("#{p[:message]}")].join(',')
+        io.puts [
+          csv_escape(p[:path]),
+          csv_escape(p[:line]),
+          csv_escape(p[:column]),
+          csv_escape(p[:kind]),
+          csv_escape(p[:check]),
+          csv_escape(p[:message]),
+        ].join(',')
       end
     end
 
     def format_github(problems, io)
       problems.each do |p|
         kind = p[:kind] == :error ? 'error' : 'warning'
-        io.puts "::#{kind} file=#{p[:path]},line=#{p[:line]},col=#{p[:column]}::#{p[:check]}: #{p[:message]}"
+        file = github_escape_property(p[:path])
+        line = github_escape_property(p[:line])
+        col = github_escape_property(p[:column])
+        message = github_escape_data("#{p[:check]}: #{p[:message]}")
+        io.puts "::#{kind} file=#{file},line=#{line},col=#{col}::#{message}"
       end
     end
 
@@ -81,6 +91,26 @@ module OpenvoxLint
     def serialise(p)
       { path: p[:path], line: p[:line], column: p[:column],
         kind: p[:kind].to_s, check: p[:check].to_s, message: p[:message] }
+    end
+
+    # GitHub workflow-command escaping:
+    # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-error-message
+    # Encode '%' first so attacker-supplied %0A/%0D cannot decode back to newlines.
+    def github_escape_data(value)
+      value.to_s.gsub('%', '%25').gsub("\r", '%0D').gsub("\n", '%0A').gsub('::', '%3A%3A')
+    end
+
+    def github_escape_property(value)
+      github_escape_data(value).gsub(':', '%3A').gsub(',', '%2C')
+    end
+
+    def csv_escape(value)
+      s = value.to_s
+      if s.match?(/[",\r\n]/)
+        %("#{s.gsub('"', '""')}")
+      else
+        s
+      end
     end
   end
 end

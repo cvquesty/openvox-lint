@@ -41,7 +41,10 @@ module OpenvoxLint
 
     def apply_flag(flag, value)
       case flag
-      when '--fix'              then self.fix = true
+      when '--fix'
+        # Destructive --fix must be requested on the CLI. An RC file must
+        # never enable writes on its own (defaults < RC < CLI).
+        $stderr.puts 'openvox-lint: ignoring --fix from RC file (pass --fix on the CLI to enable)'
       when '--no-fix'           then self.fix = false
       when '--fail-on-warnings' then self.fail_on_warnings = true
       when /\A--no-(.+)-check\z/

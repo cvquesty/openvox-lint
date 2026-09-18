@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'stringio'
+require 'tmpdir'
 require_relative '../lib/openvox-lint'
 
 RSpec.configure do |config|
