@@ -28,7 +28,7 @@ Be respectful, inclusive, and constructive in all interactions.
 
 ### Prerequisites
 
-- Ruby ≥ 2.5.0
+- Ruby ≥ 2.6.0
 - Bundler ≥ 2.0
 - Git
 

@@ -17,6 +17,7 @@ All notable changes to openvox-lint will be documented in this file.
 - Softened the gemspec `--fix` claim to the five checks that implement `#fix`.
 
 ### Changed
+- **Ruby floor is ≥ 2.6.0.** Ruby 2.5 is no longer claimed. Development `rubocop ~> 1.50` requires Ruby ≥ 2.6, so CI cannot honestly test 2.5. Matrix remains `2.6` and `3.1`–`3.3`.
 - `OpenvoxLint.new_check` always warns on stderr when a check name is overwritten (no longer gated on `OPENVOX_LINT_DEBUG`).
 - `Checks#run` calls `CheckPlugin#fix_problems` directly; the `respond_to?(:fix_problems)` guard was dead because the method is defined on the base class.
 - `CheckPlugin#compute_resource_indexes` no longer walks `formatting?` tokens; `semantic_tokens` already excludes them.
