@@ -219,6 +219,7 @@ module OpenvoxLint
     end
 
     def scan_heredoc
+      start_line = @line
       start_col = @column
       tag_match = @code[@pos..].match(/\A@\(("?)(\w+)\1\s*([\/\-|:tsnLru]*)\)/)
       unless tag_match
@@ -227,24 +228,37 @@ module OpenvoxLint
       tag = tag_match[2]; tag_len = tag_match[0].length
       add_token(:HEREDOC_OPEN, @code[@pos, tag_len], @line, start_col)
       @pos += tag_len; @column += tag_len
-      # Skip rest of current line
+      # Skip rest of current line (e.g. a trailing comma after the open tag)
       while @pos < @code.length && @code[@pos] != "\n"
         @pos += 1; @column += 1
       end
+      unless @pos < @code.length && @code[@pos] == "\n"
+        raise OpenvoxLint::Error, "unterminated heredoc starting at line #{start_line}"
+      end
       @pos += 1; @line += 1; @column = 1
-      # Read heredoc body
+      # Read heredoc body. An end tag must be a whole line matching
+      # optional strip prefix + tag + optional surrounding whitespace.
+      # Trailing junk (e.g. `| END,`) is not a terminator; the scan
+      # continues and EOF without a valid end tag is an error.
       heredoc_content = +''
+      terminated = false
+      end_tag_re = /\A[-|]?\s*#{Regexp.escape(tag)}\s*\z/
       until @pos >= @code.length
         line_start = @pos
         while @pos < @code.length && @code[@pos] != "\n"
           @pos += 1; @column += 1
         end
         current_line = @code[line_start...@pos]
-        if current_line.strip =~ /\A[-|]?\s*#{Regexp.escape(tag)}\s*\z/
-          @pos += 1 if @pos < @code.length; @line += 1; @column = 1; break
+        if current_line.strip =~ end_tag_re
+          @pos += 1 if @pos < @code.length; @line += 1; @column = 1
+          terminated = true
+          break
         end
         heredoc_content << current_line << "\n"
         @pos += 1; @line += 1; @column = 1
+      end
+      if !terminated
+        raise OpenvoxLint::Error, "unterminated heredoc starting at line #{start_line}"
       end
       add_token(:HEREDOC, heredoc_content, @line, start_col)
     end

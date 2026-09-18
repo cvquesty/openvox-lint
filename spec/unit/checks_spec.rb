@@ -49,6 +49,23 @@ RSpec.describe 'Built-in checks' do
       problems = lint('$my_var = 42', checks: %w[variable_is_lowercase])
       expect(problems).to be_empty
     end
+
+    it 'passes topscope and namespaced lowercase variables' do
+      %w[$::topscope $::mymodule::params::package_ensure $foo::bar].each do |var|
+        problems = lint("#{var} = 42", checks: %w[variable_is_lowercase])
+        expect(problems).to be_empty, "expected #{var} to pass"
+      end
+    end
+
+    it 'flags uppercase characters after a topscope prefix' do
+      problems = lint('$::MyModule::x = 42', checks: %w[variable_is_lowercase])
+      expect(problems.size).to eq(1)
+    end
+
+    it 'does not warn on a bare $:: name' do
+      problems = lint('$::', checks: %w[variable_is_lowercase])
+      expect(problems).to be_empty
+    end
   end
 
   describe ':legacy_facts' do
