@@ -134,7 +134,7 @@ Options:
     --fail-on-warnings           Exit with error code on warnings
     --no-filename                Suppress filename in output
     --no-column                  Suppress column number in output
-    --relative                   Display relative file paths
+    --relative                   Display file paths relative to the current working directory
     --only-checks CHECKS         Comma-separated list of checks to run
     --ignore-paths PATHS         Comma-separated list of glob patterns to ignore
     --list-checks                List all available checks
@@ -366,7 +366,20 @@ openvox-lint ships with **37 built-in checks** organized into categories:
 
 ### RC File
 
-Create `.openvox-lint.rc` in your project root or `~/.openvox-lint.rc`:
+Create `.openvox-lint.rc` in your project root or `~/.openvox-lint.rc`.
+Each line is a flag (with an optional value). Only the following flags are
+read from the RC file; other CLI options (`--fix`, `--relative`,
+`--no-filename`, `--no-column`) must be passed on the command line.
+An RC file cannot enable `--fix` — pass `--fix` on the CLI to enable writes.
+
+| Flag | Effect |
+|------|--------|
+| `--fail-on-warnings` | Exit 1 when warnings are found |
+| `--no-<check_name>-check` | Disable a check |
+| `--only-checks LIST` | Run only the named checks (comma-separated) |
+| `--log-format FORMAT` | Named format (`text`, `json`, `csv`, `github`, `codeclimate`) or a custom format string (`%{path}`, `%{line}`, …) |
+| `--format FORMAT` / `-f FORMAT` | Named output format only (same allowlist as CLI `-f`) |
+| `--ignore-paths GLOBS` | Comma-separated globs to skip |
 
 ```
 # Disable specific checks
@@ -383,6 +396,10 @@ Create `.openvox-lint.rc` in your project root or `~/.openvox-lint.rc`:
 --ignore-paths vendor/**/*.pp,pkg/**/*.pp
 
 # --fix in an RC file is ignored; pass --fix on the CLI to enable writes
+
+# Named format or a custom --log-format string
+# --format json
+# --log-format %{path}:%{line}:%{KIND}:%{check}:%{message}
 ```
 
 ### Inline Ignore Comments
