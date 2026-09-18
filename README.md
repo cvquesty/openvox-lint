@@ -255,7 +255,7 @@ To see every check that openvox-lint can run:
 openvox-lint --list-checks
 ```
 
-This shows the check name, severity (warning or error), and description for all 37 built-in checks.
+This lists every built-in check name and whether it is currently enabled. Severity and description live in this README and in [DOCUMENTATION.md](DOCUMENTATION.md).
 
 ---
 
@@ -505,10 +505,16 @@ openvox-lint --fail-on-warnings $files
 
 ## Writing Custom Checks
 
+openvox-lint auto-loads **only** the built-in files shipped in this gem
+(`lib/openvox-lint/plugins/checks/*.rb`). There is no `--load FILE` flag and
+no RubyGems plugin discovery. A third-party check is picked up only when
+something in the same Ruby process `require`s (or `load`s) the file after
+`openvox-lint` itself.
+
 Create a Ruby file with a check plugin:
 
 ```ruby
-# lib/openvox-lint/plugins/checks/my_custom_check.rb
+# my_custom_check.rb  (any path you control)
 OpenvoxLint.new_check(:my_custom_check) do
   def check
     tokens.each do |tok|
@@ -523,7 +529,24 @@ OpenvoxLint.new_check(:my_custom_check) do
 end
 ```
 
-Place in `lib/openvox-lint/plugins/checks/` and it will be auto-loaded.
+Load it explicitly before you run the linter:
+
+```ruby
+require 'openvox-lint'
+require_relative 'my_custom_check'
+
+linter = OpenvoxLint::Linter.new
+linter.run('manifests/')
+```
+
+Duplicate `new_check` names always warn on stderr and overwrite the previous
+registration. Putting a file under `lib/openvox-lint/plugins/checks/` in
+*your* gem does not make openvox-lint load it.
+
+To add a check to this repository, place it in
+`lib/openvox-lint/plugins/checks/` so the built-in auto-loader picks it up.
+See [DOCUMENTATION.md](DOCUMENTATION.md#plugin-development) and
+[docs/ARCHITECTURE_REVIEW.md](docs/ARCHITECTURE_REVIEW.md).
 
 ---
 
@@ -551,7 +574,7 @@ bundle update openvox-lint
 
 ```bash
 cd openvox-lint
-git pull origin main
+git pull origin development
 gem build openvox-lint.gemspec
 gem install openvox-lint-*.gem
 ```
@@ -622,12 +645,14 @@ openvox-lint/
 │       ├── linter.rb             # File-level orchestrator
 │       ├── cli.rb                # Command-line interface
 │       └── plugins/
-│           └── checks/           # 38 built-in check plugins
+│           └── checks/           # 37 built-in check plugins
 │               ├── trailing_whitespace.rb
 │               ├── legacy_facts.rb
 │               ├── hiera3_function.rb
 │               └── ...
 ├── spec/                         # RSpec test suite
+├── docs/
+│   └── ARCHITECTURE_REVIEW.md    # Evidence-based architecture notes
 ├── openvox-lint.gemspec
 ├── Gemfile
 ├── Rakefile
@@ -641,23 +666,25 @@ openvox-lint/
 
 ## Comparison with puppet-lint
 
-| Feature | puppet-lint 5.x | openvox-lint 1.3.2 |
-|---------|-----------------|------------------|
-| Ruby requirement | ≥ 3.1 | ≥ 2.5 (RHEL 8, macOS, all modern platforms) |
+Snapshot as of 2026-09-18 against [puppetlabs/puppet-lint `main` README and `lib/puppet-lint/plugins.rb`](https://github.com/puppetlabs/puppet-lint). puppet-lint remains under active maintenance; treat this table as dated evidence, not a permanent scorecard.
+
+| Feature | puppet-lint (current `main`) | openvox-lint 1.3.2 |
+|---------|------------------------------|--------------------|
+| Ruby requirement | Documented for Puppet 7/8 environments (typically ≥ 3.1 in 5.x) | ≥ 2.5 as declared in this gemspec |
 | Runtime dependencies | None | None |
-| Built-in checks | ~25 | 37 |
-| Legacy facts detection | Via plugin | Built-in |
-| Top-scope facts detection | Via plugin | Built-in |
-| Deprecated Hiera 3 function detection | No | Built-in (error) |
-| Import statement detection | No | Built-in (error) |
-| Strict indent check | Via plugin | Built-in |
-| GitHub Actions output | No | Built-in (`-f github`) |
-| Code Climate output | No | Built-in (`-f codeclimate`) |
-| CSV output | No | Built-in (`-f csv`) |
-| Custom log format | Yes | Yes (compatible) |
+| Built-in checks | Core style set plus built-in `legacy_facts` / `top_scope_facts` (including YAML facts) | 37 `.pp` checks |
+| Legacy facts detection | Built-in (not plugin-only) | Built-in |
+| Top-scope facts detection | Built-in (not plugin-only) | Built-in |
+| Deprecated Hiera 3 function detection | Not in the published core check list | Built-in (error) |
+| Import statement detection | Not in the published core check list | Built-in (error) |
+| Strict indent | 2-space / hard-tab rules in core; stricter indent historically a plugin | Built-in `strict_indent` |
+| GitHub Actions | `--sarif`, [puppet-lint-action](https://github.com/marketplace/actions/puppet-lint-action), env-based annotations | Built-in `-f github` workflow commands |
+| Code Climate | `--codeclimate-report-file` / `CODECLIMATE_REPORT_FILE` | Built-in `-f codeclimate` |
+| CSV output | No native CSV formatter | Built-in (`-f csv`) |
+| Custom log format | Yes (`%{path}`, `%{filename}`, `%{fullpath}`, …) | Yes (same core placeholders; no `%{filename}` / `%{fullpath}`) |
 | OpenVox awareness | No | Yes |
-| Plugin system | Yes | Yes (compatible) |
-| `--fix` support | Yes | Yes (real implementations for trailing_whitespace, hard_tabs, quoted_booleans, double_quoted_strings, single_quote_string_with_variables + line-based) |
+| Plugin system | `--load FILE`, `--load-from-puppet`, gem auto-discovery via `PuppetLint::Plugins.load_from_gems` | `OpenvoxLint.new_check` DSL; **require-your-file only** — no `--load`, no gem auto-discovery |
+| `--fix` support | Yes (token-rewriting; many core checks) | Yes, line-based, for five checks: `trailing_whitespace`, `hard_tabs`, `quoted_booleans`, `double_quoted_strings`, `single_quote_string_with_variables` |
 | vim-openvox integration | No | Native |
 
 ---

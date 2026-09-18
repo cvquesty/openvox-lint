@@ -10,6 +10,20 @@ All notable changes to openvox-lint will be documented in this file.
 - `--fix` refuses to write if the target path is a symlink or any path component is a symlink, and opens with `O_NOFOLLOW` when available.
 - CSV output now escapes fields that contain commas, quotes, or newlines.
 
+### Documentation
+- Added [docs/ARCHITECTURE_REVIEW.md](docs/ARCHITECTURE_REVIEW.md) with path/symbol cites for the lexer/token/check plugin model, dead APIs, puppet-lint comparison honesty, design drift, extensibility, versioning, and dependency boundaries.
+- Documented the real custom-check loading model: require-your-file only; no `--load` and no gem auto-discovery (README, DOCUMENTATION).
+- Dated the puppet-lint comparison tables against puppet-lint `main` as of 2026-09-18 (GitHub Actions / Code Climate / built-in fact checks / plugin loader).
+- Softened the gemspec `--fix` claim to the five checks that implement `#fix`.
+
+### Changed
+- `OpenvoxLint.new_check` always warns on stderr when a check name is overwritten (no longer gated on `OPENVOX_LINT_DEBUG`).
+- `Checks#run` calls `CheckPlugin#fix_problems` directly; the `respond_to?(:fix_problems)` guard was dead because the method is defined on the base class.
+- `CheckPlugin#compute_resource_indexes` no longer walks `formatting?` tokens; `semantic_tokens` already excludes them.
+
+### Fixed
+- Lexer class comment no longer claims EPP tag scanning. The 1.0.0 changelog line below is corrected to match the implementation.
+
 ## [1.3.2] - 2026-05-24
 
 ### Fixed
@@ -257,7 +271,7 @@ All notable changes to openvox-lint will be documented in this file.
   - Token-based check plugin architecture with `OpenvoxLint.new_check` DSL
   - Doubly-linked token list for efficient navigation
   - Support for all Puppet 8 / OpenVox 8.x language constructs
-  - Heredoc, EPP tag, regex, and string interpolation tokenization
+  - Heredoc, regex, and string interpolation tokenization (EPP tags were never scanned)
 
 - **38 Built-in Checks**
   - **Whitespace**: `trailing_whitespace`, `hard_tabs`, `line_length`, `space_before_arrow`, `strict_indent`

@@ -42,7 +42,7 @@ module OpenvoxLint
 
     def new_check(name, &block)
       if checks.key?(name)
-        $stderr.puts "openvox-lint: warning: check '#{name}' is already registered — overwriting" if ENV['OPENVOX_LINT_DEBUG']
+        $stderr.puts "openvox-lint: warning: check '#{name}' is already registered — overwriting"
       end
       klass = Class.new(CheckPlugin, &block)
       klass.instance_variable_set(:@check_name, name)
