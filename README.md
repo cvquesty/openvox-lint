@@ -2,6 +2,7 @@
 
 [![Gem Version](https://img.shields.io/gem/v/openvox-lint)](https://rubygems.org/gems/openvox-lint)
 [![Gem Downloads](https://img.shields.io/gem/dt/openvox-lint)](https://rubygems.org/gems/openvox-lint)
+[![CI](https://github.com/cvquesty/openvox-lint/actions/workflows/ci.yml/badge.svg?branch=development)](https://github.com/cvquesty/openvox-lint/actions/workflows/ci.yml)
 ![Ruby](https://img.shields.io/badge/ruby-%E2%89%A5%202.6-red)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 ![Checks](https://img.shields.io/badge/built--in%20checks-37-brightgreen)
