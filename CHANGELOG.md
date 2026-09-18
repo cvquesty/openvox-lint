@@ -11,6 +11,7 @@ All notable changes to openvox-lint will be documented in this file.
 - CSV output now escapes fields that contain commas, quotes, or newlines.
 
 ### Documentation
+- README includes a GitHub Actions CI badge for the `development` branch.
 - Added [docs/ARCHITECTURE_REVIEW.md](docs/ARCHITECTURE_REVIEW.md) with path/symbol cites for the lexer/token/check plugin model, dead APIs, puppet-lint comparison honesty, design drift, extensibility, versioning, and dependency boundaries.
 - Documented the real custom-check loading model: require-your-file only; no `--load` and no gem auto-discovery (README, DOCUMENTATION).
 - Dated the puppet-lint comparison tables against puppet-lint `main` as of 2026-09-18 (GitHub Actions / Code Climate / built-in fact checks / plugin loader).
