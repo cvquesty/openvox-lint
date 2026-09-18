@@ -68,17 +68,32 @@ module OpenvoxLint
     end
 
     def expand_files(fileargs)
+      if fileargs.nil? || fileargs.empty?
+        raise OpenvoxLint::Error, 'no files or directories specified'
+      end
+
       files = []
       fileargs.each do |arg|
         if File.directory?(arg)
           files.concat(Dir.glob(File.join(arg, '**', '*.pp')))
-        elsif arg.include?('*')
-          files.concat(Dir.glob(arg))
+        elsif arg.include?('*') || arg.include?('?') || arg.include?('[')
+          matches = Dir.glob(arg)
+          if matches.empty?
+            raise OpenvoxLint::Error, "glob matched no files: #{arg}"
+          end
+          files.concat(matches)
         elsif File.file?(arg)
           files << arg
+        else
+          raise OpenvoxLint::Error, "no such file or directory: #{arg}"
         end
       end
-      files.reject { |f| ignored?(f) }.uniq
+
+      files = files.reject { |f| ignored?(f) }.uniq
+      if files.empty?
+        raise OpenvoxLint::Error, 'no Puppet manifests (.pp) found to lint'
+      end
+      files
     end
 
     def ignored?(filepath)
