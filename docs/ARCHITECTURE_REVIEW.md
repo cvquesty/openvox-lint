@@ -105,7 +105,7 @@ Still-valid differentiators (with current evidence):
 - **Hiera 3 functions** and **`import`** as built-in errors — not in puppet-lint's published core check list.
 - **OpenVox** style-guide targeting and `vim-openvox` as the default backend.
 - **Native CSV** (`Report#format_csv`) — puppet-lint help lists json/sarif/codeclimate/log-format, not CSV.
-- **Ruby floor** as declared here (`>= 2.5.0` in `openvox-lint.gemspec`). Sibling owns whether that claim matches CI (`.github/workflows/ci.yml` matrices `3.1`/`3.2`/`3.3` only).
+- **Ruby floor** as declared here (`>= 2.6.0` in `openvox-lint.gemspec`). CI matrices `2.6` and `3.1`–`3.3`. Ruby 2.5 is no longer claimed.
 
 ### F7. Comparison tables overclaimed vs current puppet-lint — **Medium** — **Remediated here**
 
