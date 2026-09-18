@@ -350,14 +350,24 @@ We follow [Semantic Versioning](https://semver.org/):
 
 ### Release Process (Maintainers)
 
+Keep **git tag**, **RubyGems**, and **GitHub Release** in sync (see issue #4).
+
 1. Update `lib/openvox-lint/version.rb`
 2. Update `CHANGELOG.md` with release date
 3. Update check count in README.md and DOCUMENTATION.md
-4. Commit: `git commit -m "chore: release v1.3.2"`
-5. Tag: `git tag v1.3.2`
-6. Push: `git push origin development --tags`
+4. Commit: `git commit -m "chore: release vX.Y.Z"`
+5. Tag: `git tag vX.Y.Z`
+6. Push branch + tag: `git push origin development --tags`
 7. Build gem: `gem build openvox-lint.gemspec`
-8. Publish: `gem push openvox-lint-1.3.2.gem`
+8. Publish gem: `gem push openvox-lint-X.Y.Z.gem`
+9. Create GitHub Release for the same tag (notes from CHANGELOG):
+   `gh release create vX.Y.Z --title "vX.Y.Z" --notes-file - <<'EOF'`
+   (paste the CHANGELOG section for this version)
+   `EOF`
+10. Verify all three match:
+    - Tag: `git ls-remote --tags origin 'vX.Y.Z'`
+    - Gem: https://rubygems.org/gems/openvox-lint/versions/X.Y.Z
+    - GitHub Release: `gh release view vX.Y.Z`
 
 ---
 
