@@ -81,5 +81,71 @@ RSpec.describe OpenvoxLint::Lexer do
       notify_tok = lexer.tokens.find { |t| t.type == :NAME && t.value == 'notify' }
       expect(notify_tok.line).to eq(2)
     end
+
+    describe 'heredocs' do
+      it 'tokenises HEREDOC_OPEN and HEREDOC' do
+        code = <<~PP
+          $x = @(END)
+          hello
+          END
+        PP
+        lexer = described_class.new(code)
+        expect(lexer.tokens.map(&:type)).to include(:HEREDOC_OPEN, :HEREDOC)
+        heredoc = lexer.tokens.find { |t| t.type == :HEREDOC }
+        expect(heredoc.value).to eq("hello\n")
+      end
+
+      it 'allows a trailing comma after the open tag' do
+        code = <<~PP
+          file { '/tmp/x':
+            content => @(END/L),
+              hello
+              | END
+          }
+        PP
+        lexer = described_class.new(code)
+        expect(lexer.tokens.map(&:type)).to include(:HEREDOC_OPEN, :HEREDOC)
+        heredoc = lexer.tokens.find { |t| t.type == :HEREDOC }
+        expect(heredoc.value).to include('hello')
+      end
+
+      it 'tokenises margin-strip and dash-strip end tags' do
+        ['| END', '- END'].each do |end_tag|
+          code = "$x = @(END)\n  hello\n  #{end_tag}\n"
+          lexer = described_class.new(code)
+          expect(lexer.tokens.map(&:type)).to include(:HEREDOC_OPEN, :HEREDOC),
+            "expected #{end_tag.inspect} to close a heredoc"
+        end
+      end
+
+      it 'raises on an unterminated heredoc' do
+        code = <<~PP
+          $x = @(END)
+          hello
+        PP
+        expect { described_class.new(code) }.to raise_error(
+          OpenvoxLint::Error,
+          /unterminated heredoc starting at line 1/
+        )
+      end
+
+      # Contract: `| END,` is not a valid terminator (junk after the tag).
+      # The line is treated as heredoc content, so the scan continues and
+      # EOF without a whole-line end tag raises — fail-closed, not a clean lint.
+      it 'raises when the end tag has trailing junk' do
+        code = <<~PP
+          file { '/tmp/whatever.txt':
+            content => @(END/L)
+              content
+              | END,
+            mode    => '0644',
+          }
+        PP
+        expect { described_class.new(code) }.to raise_error(
+          OpenvoxLint::Error,
+          /unterminated heredoc starting at line 2/
+        )
+      end
+    end
   end
 end
