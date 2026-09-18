@@ -3,6 +3,8 @@
 module OpenvoxLint
   # Holds all runtime configuration.
   class Configuration
+    NAMED_FORMATS = %w[text json csv github codeclimate].freeze
+
     DEFAULTS = {
       log_format: 'text', with_filename: true, fail_on_warnings: false,
       fix: false, only_checks: [], disabled_checks: [],
@@ -52,10 +54,31 @@ module OpenvoxLint
       when '--only-checks'
         self.only_checks = (value || '').split(',').map { |c| c.strip.to_sym }
       when '--log-format'
-        self.log_format = value&.strip || 'text'
+        apply_log_format_value(value)
+      when '--format', '-f'
+        apply_named_format(value)
       when '--ignore-paths'
         self.ignore_paths = (value || '').split(',').map(&:strip)
       end
+    end
+
+    # --log-format accepts a named format or a custom placeholder string.
+    def apply_log_format_value(value)
+      value = value&.strip
+      return if value.nil? || value.empty?
+      if NAMED_FORMATS.include?(value)
+        self.log_format = value
+      else
+        self.custom_log_format = value
+        self.log_format = 'custom'
+      end
+    end
+
+    # -f / --format in an RC file accept named formats only (same as CLI -f).
+    def apply_named_format(value)
+      value = value&.strip
+      return unless NAMED_FORMATS.include?(value)
+      self.log_format = value
     end
   end
 end

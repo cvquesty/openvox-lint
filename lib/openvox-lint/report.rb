@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'pathname'
 
 module OpenvoxLint
   # Formats and outputs lint problems in the requested format.
@@ -12,6 +13,7 @@ module OpenvoxLint
     end
 
     def format(problems, io: $stdout)
+      problems = with_display_paths(problems)
       case @config.log_format
       when 'json'        then format_json(problems, io)
       when 'csv'         then format_csv(problems, io)
@@ -111,6 +113,22 @@ module OpenvoxLint
       else
         s
       end
+    end
+
+    # When --relative is set, emit paths relative to Dir.pwd.
+    # Problems hashes are not mutated.
+    def with_display_paths(problems)
+      return problems unless @config.relative
+      problems.map { |p| p.merge(path: display_path(p[:path])) }
+    end
+
+    def display_path(path)
+      return path if path.nil? || path.to_s.empty?
+      Pathname.new(File.expand_path(path.to_s)).relative_path_from(
+        Pathname.new(File.expand_path(Dir.pwd))
+      ).to_s
+    rescue ArgumentError
+      path
     end
   end
 end
