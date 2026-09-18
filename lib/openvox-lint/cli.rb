@@ -23,7 +23,12 @@ module OpenvoxLint
       end
       files = @args.empty? ? ['.'] : @args
       linter = Linter.new(configuration: @config)
-      linter.run(*files)
+      begin
+        linter.run(*files)
+      rescue OpenvoxLint::Error => e
+        $stderr.puts "openvox-lint: #{e.message}"
+        return 1
+      end
       Report.new(@config).format(linter.problems)
       print_summary(linter) unless @config.log_format == 'json'
       linter.exit_code
