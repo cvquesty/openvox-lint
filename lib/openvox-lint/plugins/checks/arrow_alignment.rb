@@ -41,7 +41,7 @@ OpenvoxLint.new_check(:arrow_alignment) do
   def group_arrows(arrows)
     groups = []
     current = [arrows.first]
-    arrows[1..].each do |arrow|
+    arrows[1..-1].each do |arrow|
       if arrow.line - current.last.line <= 2
         current << arrow
       else

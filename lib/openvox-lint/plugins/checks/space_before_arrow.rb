@@ -78,7 +78,7 @@ OpenvoxLint.new_check(:space_before_arrow) do
     groups  = []
     current = [entries.first]
 
-    entries[1..].each do |entry|
+    entries[1..-1].each do |entry|
       if entry[:arrow].line - current.last[:arrow].line <= 2
         current << entry
       else

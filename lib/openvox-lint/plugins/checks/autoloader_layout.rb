@@ -17,7 +17,7 @@ OpenvoxLint.new_check(:autoloader_layout) do
       expected_path = if parts.length == 1
                         "#{parts[0]}/manifests/init.pp"
                       else
-                        "#{parts[0]}/manifests/#{parts[1..].join('/')}.pp"
+                        "#{parts[0]}/manifests/#{parts[1..-1].join('/')}.pp"
                       end
       next if fullpath.end_with?(expected_path)
       # Also check with just the filename portion
