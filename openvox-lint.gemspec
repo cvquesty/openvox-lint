@@ -16,7 +16,9 @@ Gem::Specification.new do |spec|
     It checks your .pp files against the OpenVox Language Style Guide (the
     current canonical reference) and catches common errors, deprecated patterns
     (legacy facts, Hiera 3, import, etc.), strict-mode issues, and Puppet 8+ /
-    OpenVox 8.x problems. Includes real --fix support for many checks.
+    OpenVox 8.x problems. Includes real --fix support for five checks:
+    trailing_whitespace, hard_tabs, quoted_booleans, double_quoted_strings,
+    and single_quote_string_with_variables.
 
     Fully compatible with OpenVox 8.x and Puppet 8.x. Drop-in replacement for
     the archived puppet-lint with better Ruby 2.5+ support and OpenVox-specific
@@ -42,6 +44,7 @@ Gem::Specification.new do |spec|
     'README.md',
     'CHANGELOG.md',
     'DOCUMENTATION.md',
+    'docs/**/*',
   ]
   spec.bindir        = 'bin'
   spec.executables   = ['openvox-lint']

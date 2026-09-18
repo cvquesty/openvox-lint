@@ -11,7 +11,7 @@ This document covers the architecture, every public API, every built-in check,
 the lexer token types, the plugin system, and integration guidance.
 
 **Version:** 1.3.2  
-**Checks:** 37 built-in (with real --fix support for 5+ checks)  
+**Checks:** 37 built-in (with real --fix support for 5 checks)  
 **License:** Apache 2.0  
 **Compatibility:** OpenVox 8.x, Puppet 8.x, Puppet 7.x (with deprecation warnings)
 
@@ -45,6 +45,7 @@ the lexer token types, the plugin system, and integration guidance.
 - [Plugin Development](#plugin-development)
 - [Migration from puppet-lint](#migration-from-puppet-lint)
 - [File Inventory](#file-inventory)
+- [Architecture Review](docs/ARCHITECTURE_REVIEW.md)
 
 ---
 
@@ -79,7 +80,7 @@ the lexer token types, the plugin system, and integration guidance.
 - **Zero runtime dependencies** — only Ruby standard library
 - **Token-based analysis** — works on token stream, not AST
 - **Puppet/OpenVox agnostic** — identical language support for both
-- **Extensible** — plugin system for custom checks
+- **Extensible** — `OpenvoxLint.new_check` DSL for custom checks (require-your-file; see Plugin Development)
 - **CI-friendly** — multiple output formats, proper exit codes
 
 ---
@@ -104,7 +105,7 @@ The top-level namespace for all openvox-lint classes.
 | `.configure { \|c\| }` | `Configuration` | Yields configuration for block-style setup |
 | `.reset_configuration!` | `Configuration` | Reset configuration to defaults (called by CLI) |
 | `.checks` | `Hash{Symbol => Class}` | Registry of loaded check classes |
-| `.new_check(name, &block)` | `Class` | Register a new check plugin (warns on duplicates) |
+| `.new_check(name, &block)` | `Class` | Register a new check plugin (always warns on stderr if the name is already registered, then overwrites) |
 
 #### Exceptions
 
@@ -1490,10 +1491,19 @@ Use the module autoloader by placing files in the correct location:
 
 ## Plugin Development
 
+openvox-lint auto-loads **only** the 37 built-in files under this gem's
+`lib/openvox-lint/plugins/checks/*.rb` (see `lib/openvox-lint.rb`). There is
+no `--load FILE` CLI flag and no RubyGems plugin discovery comparable to
+`PuppetLint::Plugins.load_from_gems`. Custom checks are visible only after
+the process `require`s or `load`s the file that calls `OpenvoxLint.new_check`.
+
+Registering a check name that is already present always prints a warning on
+stderr and overwrites the previous class.
+
 ### Creating a Check Plugin
 
 ```ruby
-# lib/openvox-lint/plugins/checks/my_custom_check.rb
+# my_custom_check.rb  (any path; you must require this file yourself)
 OpenvoxLint.new_check(:my_custom_check) do
   def check
     tokens.each do |tok|
@@ -1508,12 +1518,22 @@ OpenvoxLint.new_check(:my_custom_check) do
 
   # Optional: implement auto-fix
   def fix(problem)
-    # Find and modify the problematic token
-    # Or raise NoFix if this instance can't be fixed
+    # Mutate manifest_lines in place, or raise NoFix if this instance
+    # cannot be fixed. Only five built-in checks currently implement #fix.
     raise OpenvoxLint::NoFix
   end
 end
 ```
+
+Load the file after `require 'openvox-lint'` and before `Linter#run`:
+
+```ruby
+require 'openvox-lint'
+require_relative 'my_custom_check'
+```
+
+To contribute a **built-in** check to this repository, place the file in
+`lib/openvox-lint/plugins/checks/` so the gem auto-loader picks it up.
 
 ### Using Helper Methods
 
@@ -1553,22 +1573,44 @@ end
 
 ### Distributing as a Gem
 
+A companion gem can depend on `openvox-lint` and ship check files, but
+**openvox-lint will not auto-discover them**. Consumers must require the
+entry point of your gem (or each check file) themselves.
+
 ```ruby
 # openvox-lint-my_checks.gemspec
 Gem::Specification.new do |spec|
   spec.name = 'openvox-lint-my_checks'
   spec.version = '1.0.0'
   spec.summary = 'Custom checks for openvox-lint'
-  
+
   spec.add_runtime_dependency 'openvox-lint', '~> 1.0'
-  
+
   spec.files = Dir['lib/**/*']
   spec.require_paths = ['lib']
 end
 ```
 
-Place check files in `lib/openvox-lint/plugins/checks/` and they will
-be auto-loaded when the gem is required.
+```ruby
+# lib/openvox-lint-my_checks.rb  (your gem's require path)
+require 'openvox-lint'
+require_relative 'openvox-lint-my_checks/no_eval'
+```
+
+```ruby
+# In a Rake task or wrapper script
+require 'openvox-lint'
+require 'openvox-lint-my_checks'
+
+linter = OpenvoxLint::Linter.new
+linter.run('manifests/')
+```
+
+Putting files under `lib/openvox-lint/plugins/checks/` inside *your* gem
+does not register them. That glob is evaluated only against this gem's
+`__dir__` in `lib/openvox-lint.rb`. There is also no `--load` flag for
+`openvox-lint` CLI invocations; wrap the CLI or call `Linter` from Ruby
+after requiring your checks.
 
 ---
 
@@ -1579,22 +1621,24 @@ broader compatibility and additional checks.
 
 ### Key Differences
 
-| Feature | puppet-lint 5.x | openvox-lint 1.x |
-|---------|-----------------|------------------|
-| Ruby requirement | ≥ 3.1 | ≥ 2.5 (works on RHEL 8, macOS system Ruby) |
+Snapshot as of 2026-09-18 against [puppetlabs/puppet-lint `main`](https://github.com/puppetlabs/puppet-lint) (README plus `lib/puppet-lint/plugins.rb`). See [docs/ARCHITECTURE_REVIEW.md](docs/ARCHITECTURE_REVIEW.md) for cites.
+
+| Feature | puppet-lint (current `main`) | openvox-lint 1.x |
+|---------|------------------------------|------------------|
+| Ruby requirement | Documented for Puppet 7/8 environments (typically ≥ 3.1 in 5.x) | ≥ 2.5 as declared in this gemspec |
 | Runtime dependencies | None | None |
-| Built-in checks | ~25 | 37 |
-| Legacy facts detection | Via plugin | Built-in |
-| Top-scope facts detection | Via plugin | Built-in |
-| Deprecated Hiera 3 function detection | No | Built-in (ERROR) |
-| Import statement detection | No | Built-in (ERROR) |
-| Strict indent check | Via plugin | Built-in |
-| GitHub Actions output | No | Built-in (`-f github`) |
-| Code Climate output | No | Built-in (`-f codeclimate`) |
-| CSV output | No | Built-in (`-f csv`) |
+| Built-in checks | Core style set plus built-in fact checks (including YAML) | 37 `.pp` checks |
+| Legacy facts detection | Built-in | Built-in |
+| Top-scope facts detection | Built-in | Built-in |
+| Deprecated Hiera 3 function detection | Not in the published core check list | Built-in (ERROR) |
+| Import statement detection | Not in the published core check list | Built-in (ERROR) |
+| Strict indent | 2-space / hard-tab rules in core | Built-in `strict_indent` |
+| GitHub Actions | `--sarif`, puppet-lint-action, env-based annotations | Built-in `-f github` |
+| Code Climate | `--codeclimate-report-file` | Built-in `-f codeclimate` |
+| CSV output | No native CSV formatter | Built-in (`-f csv`) |
 | OpenVox awareness | No | Yes |
-| `--fix` support | Yes | Yes |
-| Plugin system | Yes | Yes (compatible API) |
+| `--fix` support | Yes (token-rewriting; many core checks) | Yes, line-based, for five named checks |
+| Plugin system | `--load`, `--load-from-puppet`, gem auto-discovery | `new_check` DSL; require-your-file only (not drop-in compatible) |
 
 ### Command-Line Compatibility
 
@@ -1625,10 +1669,14 @@ Rename `.puppet-lint.rc` to `.openvox-lint.rc`.  The format is identical:
 
 ### Plugin Migration
 
-Plugin APIs are similar.  Main differences:
+The `new_check` / `#check` / `#fix` / `notify` surface looks familiar, but
+the plugin **loading** model is not compatible:
 
 1. Module name: `OpenvoxLint` instead of `PuppetLint`
 2. Check registration: `OpenvoxLint.new_check(:name)` instead of `PuppetLint.new_check(:name)`
+3. No `PuppetLint::Data` singleton — helpers live on `CheckPlugin`
+4. No gem auto-discovery and no `--load` — `require` the check file yourself
+5. `#fix` should mutate `manifest_lines`, not rewrite the token list
 
 ---
 
@@ -1660,6 +1708,7 @@ Plugin APIs are similar.  Main differences:
 | `spec/spec_helper.rb` | RSpec test helper |
 | `spec/unit/lexer_spec.rb` | Lexer unit tests |
 | `spec/unit/checks_spec.rb` | Check unit tests |
+| `spec/unit/architecture_spec.rb` | Registry, resource-index, and lexer-honesty contracts |
 | `openvox-lint.gemspec` | Gem specification |
 | `Gemfile` | Development dependencies |
 | `Rakefile` | Rake tasks |
@@ -1667,3 +1716,4 @@ Plugin APIs are similar.  Main differences:
 | `README.md` | User documentation |
 | `CHANGELOG.md` | Version history |
 | `DOCUMENTATION.md` | This file |
+| `docs/ARCHITECTURE_REVIEW.md` | Evidence-based architecture review |

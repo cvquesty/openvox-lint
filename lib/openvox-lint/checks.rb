@@ -23,7 +23,7 @@ module OpenvoxLint
           fullpath: @fullpath, ignore_comments: @ignore_comments,
         )
         @problems.concat(results)
-        plugin.fix_problems if @configuration.fix && plugin.respond_to?(:fix_problems)
+        plugin.fix_problems if @configuration.fix
       end
       @problems.sort_by { |p| [p[:line] || 0, p[:column] || 0] }
     end

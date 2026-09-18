@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 module OpenvoxLint
-  # Tokenises a Puppet / OpenVox manifest string into an Array of Token
-  # objects.  The lexer recognises all Puppet 8 / OpenVox 8.x language
-  # constructs including heredocs, EPP tags, Deferred/Sensitive types,
-  # type aliases, and the full operator set.
+  # Tokenises a Puppet / OpenVox `.pp` manifest string into an Array of
+  # Token objects.  The lexer recognises keywords, operators, heredocs,
+  # regexes, interpolated strings, numbers, and type-reference names
+  # commonly found in Puppet 8 / OpenVox 8.x manifests.  It does not
+  # scan EPP tags (`<%` / `%>`); `.epp` templates are not a first-class
+  # target.  Deferred/Sensitive/type-alias syntax is tokenised as
+  # ordinary names and class references, not dedicated token types.
   class Lexer
     KEYWORDS = {
       'and' => :AND, 'application' => :APPLICATION, 'attr' => :ATTR,

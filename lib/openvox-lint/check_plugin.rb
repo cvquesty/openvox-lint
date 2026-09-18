@@ -95,14 +95,10 @@ module OpenvoxLint
           # Skip NAME { that belong to class/define/node bodies rather than
           # actual resources. This prevents inner statements (including other
           # resources) from being treated as parameters of the class itself.
-          k = i - 1
-          while k >= 0
-            t = sem[k]
-            break if t.type == :CLASS || t.type == :DEFINE || t.type == :NODE
-            break unless t.formatting?
-            k -= 1
-          end
-          if k >= 0 && [:CLASS, :DEFINE, :NODE].include?(sem[k].type)
+          # `sem` is already formatting-free, so the previous semantic token
+          # is the only one that can be the class/define/node keyword.
+          prev = i.positive? ? sem[i - 1] : nil
+          if prev && [:CLASS, :DEFINE, :NODE].include?(prev.type)
             i += 1
             next
           end

@@ -173,6 +173,12 @@ Open a pull request on GitHub with:
 
 ## Writing Check Plugins
 
+In-tree checks belong in `lib/openvox-lint/plugins/checks/` so the gem
+auto-loader in `lib/openvox-lint.rb` picks them up. Out-of-tree / third-party
+checks are **not** auto-discovered: callers must `require` the file. See
+[DOCUMENTATION.md](DOCUMENTATION.md#plugin-development) and
+[docs/ARCHITECTURE_REVIEW.md](docs/ARCHITECTURE_REVIEW.md).
+
 ### Basic Check Structure
 
 ```ruby
