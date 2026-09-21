@@ -167,7 +167,7 @@ Remaining extensibility limits (not changed here):
 
 ### F12. Semver process is documented; some historical notes overclaim — **Low** — **Partially remediated**
 
-- **Evidence:** `CONTRIBUTING.md` "Releasing" requires bumping `OpenvoxLint::VERSION` (`lib/openvox-lint/version.rb`, currently `1.3.2`), `CHANGELOG.md`, and check counts. `[1.3.0]` says "All references now 1.3.1" (version-skid from the 1.3.0→1.3.1 republish; `UPDATE_SUMMARY.md` explains it). `[1.0.0]` claimed EPP tokenization (corrected in this PR). `[1.0.8]` documented the debug-gated duplicate warning (superseded by Unreleased).
+- **Evidence:** `CONTRIBUTING.md` "Releasing" requires bumping `OpenvoxLint::VERSION` (`lib/openvox-lint/version.rb`, currently `1.3.3`), `CHANGELOG.md`, and check counts. `[1.3.0]` says "All references now 1.3.1" (version-skid from the 1.3.0→1.3.1 republish; `UPDATE_SUMMARY.md` explains it). `[1.0.0]` claimed EPP tokenization (corrected in this PR). `[1.0.8]` documented the debug-gated duplicate warning (superseded in 1.3.3).
 - **Recommendation:** Add an `[Unreleased]` section for architecture work (done). Do not rewrite unrelated historical narrative. Combined with sibling `[Unreleased]` Security notes after rebase onto #9/#12.
 
 ### F13. Gemspec `--fix` "many checks" — **Low** — **Remediated here**
