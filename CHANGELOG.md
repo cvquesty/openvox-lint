@@ -4,6 +4,15 @@ All notable changes to openvox-lint will be documented in this file.
 
 ## [Unreleased]
 
+## [1.3.4] - 2026-09-21
+
+Patch release so the published gem matches tip. Resource indexes now see capitalized resource defaults. No new checks.
+
+### Fixed
+- Resource indexes treat capitalized resource defaults (`File {`, `Notify {`) via CLASSREF.
+- Class, define, and node bodies are still skipped using the previous semantic token. There is no formatting walk.
+- Specs cover resource defaults against capitalized class and define names.
+
 ## [1.3.3] - 2026-09-21
 
 Patch release since 1.3.2. Safer CI and auto-fix, clearer checks and CLI, and an honest story for custom checks. No new checks.

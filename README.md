@@ -687,7 +687,7 @@ openvox-lint/
 
 Snapshot as of 2026-09-18 against [puppetlabs/puppet-lint `main` README and `lib/puppet-lint/plugins.rb`](https://github.com/puppetlabs/puppet-lint). puppet-lint remains under active maintenance; treat this table as dated evidence, not a permanent scorecard.
 
-| Feature | puppet-lint (current `main`) | openvox-lint 1.3.3 |
+| Feature | puppet-lint (current `main`) | openvox-lint 1.3.4 |
 |---------|------------------------------|--------------------|
 | Ruby requirement | Documented for Puppet 7/8 environments (typically ≥ 3.1 in 5.x) | ≥ 2.6 as declared in this gemspec |
 | Runtime dependencies | None | None |
