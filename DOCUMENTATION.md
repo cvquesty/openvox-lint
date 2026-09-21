@@ -10,13 +10,8 @@ reported in multiple output formats suitable for humans, CI systems, and IDEs.
 This document covers the architecture, every public API, every built-in check,
 the lexer token types, the plugin system, and integration guidance.
 
-<<<<<<< HEAD
 **Version:** 1.3.3  
 **Checks:** 37 built-in (with real --fix support for 5 checks)  
-=======
-**Version:** 1.3.4-1 (dev)  
-**Checks:** 38 built-in (with real --fix support for 6+ checks)  
->>>>>>> bab7829 (Committing latest refactor work)
 **License:** Apache 2.0  
 **Compatibility:** OpenVox 8.x, Puppet 8.x, Puppet 7.x (with deprecation warnings)
 
@@ -33,12 +28,12 @@ the lexer token types, the plugin system, and integration guidance.
   - [Class: Configuration](#class-openvoxlintconfiguration)
   - [Class: Linter](#class-openvoxlintlinter)
   - [Class: Report](#class-openvoxlintreport)
-- [Complete Check Reference (38 Checks)](#complete-check-reference-38-checks)
+- [Complete Check Reference (37 Checks)](#complete-check-reference-37-checks)
   - [Whitespace & Formatting (5)](#whitespace--formatting-5-checks)
   - [Arrow Alignment (1)](#arrow-alignment-1-check)
   - [Quoting & Strings (5)](#quoting--strings-5-checks)
   - [Variables (2)](#variables-2-checks)
-  - [Resources (8)](#resources-8-checks)
+  - [Resources (7)](#resources-7-checks)
   - [Classes & Defines (5)](#classes--defines-5-checks)
   - [Conditionals (2)](#conditionals-2-checks)
   - [References & Syntax (3)](#references--syntax-3-checks)
@@ -391,7 +386,7 @@ report = OpenvoxLint::Report.new(configuration)
 
 ---
 
-## Complete Check Reference (38 Checks)
+## Complete Check Reference (37 Checks)
 
 ### Whitespace & Formatting (5 checks)
 
@@ -742,7 +737,7 @@ $my_variable = 'value'
 
 ---
 
-### Resources (8 checks)
+### Resources (7 checks)
 
 #### `ensure_first_param` (WARNING)
 
@@ -793,40 +788,6 @@ file { '/usr/local/bin/python':
   target => '/usr/bin/python3',
 }
 ```
-
----
-
-#### `unquoted_ensure_value` (WARNING)
-
-The value of the `ensure` parameter should be a single-quoted string for
-style consistency with the other attributes in the resource.
-
-**Why:** When the rest of a resource stanza uses quoted values
-(`owner => 'root'`, `content => '...'`, etc.), a bareword `ensure => present`
-looks visually inconsistent — especially once arrows are aligned. Quoting the
-ensure value makes the block read uniformly.
-
-**Bad:**
-```puppet
-file { '/tmp/foo':
-  ensure => present,
-  owner  => 'root',
-  mode   => '0644',
-}
-```
-
-**Good:**
-```puppet
-file { '/tmp/foo':
-  ensure => 'present',
-  owner  => 'root',
-  mode   => '0644',
-}
-```
-
-This check only flags bare `NAME` / `CLASSREF` tokens as values for `ensure`.
-Already-quoted strings, variables, arrays, or function calls are left alone
-(they are either correct or a different lint problem).
 
 ---
 
@@ -1743,7 +1704,7 @@ the plugin **loading** model is not compatible:
 | `lib/openvox-lint/report.rb` | Output formatters (text, json, etc.) |
 | `lib/openvox-lint/linter.rb` | File discovery and orchestration |
 | `lib/openvox-lint/cli.rb` | Command-line interface |
-| `lib/openvox-lint/plugins/checks/*.rb` | 38 built-in check plugins |
+| `lib/openvox-lint/plugins/checks/*.rb` | 37 built-in check plugins |
 | `spec/spec_helper.rb` | RSpec test helper |
 | `spec/unit/lexer_spec.rb` | Lexer unit tests |
 | `spec/unit/checks_spec.rb` | Check unit tests |
