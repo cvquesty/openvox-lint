@@ -297,12 +297,13 @@ openvox-lint ships with **37 built-in checks** organized into categories:
 | `variable_is_lowercase` | warning | All variables must be lowercase |
 | `variable_contains_dash` | warning | Variables must not contain dashes |
 
-### Resources (7 checks)
+### Resources (8 checks)
 
 | Check | Severity | Description |
 |-------|----------|-------------|
 | `ensure_first_param` | warning | `ensure` must be the first attribute |
 | `ensure_not_symlink_target` | warning | Use `ensure => link` with `target` |
+| `unquoted_ensure_value` | warning | `ensure` parameter values must be single-quoted strings |
 | `file_mode` | warning | File modes as 4-digit quoted octal or symbolic |
 | `unquoted_file_mode` | warning | File modes must be quoted strings |
 | `unquoted_resource_title` | warning | Resource titles must be quoted |

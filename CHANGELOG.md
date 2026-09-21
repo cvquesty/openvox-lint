@@ -2,7 +2,34 @@
 
 All notable changes to openvox-lint will be documented in this file.
 
+<<<<<<< HEAD
 ## [Unreleased]
+=======
+## Unreleased (development)
+
+### Fixed
+- **Hashrocket / arrow alignment**: Completely rewrote the grouping mechanism in
+  `arrow_alignment` and `space_before_arrow` to use `resource_indexes` (the same
+  robust brace-depth parser used by `trailing_comma`, `duplicate_params`, etc.).
+  This eliminates all previous failure modes:
+  - Arrows in different resources no longer get incorrectly grouped.
+  - Large gaps (heredocs, multi-line values, comments, blank lines) no longer
+    split alignment groups inside a single resource.
+  - Alignment now correctly applies inside resource *default* blocks
+    (`File { ... }`, `User { ... }`) because `compute_resource_indexes` was
+    broadened to recognize `CLASSREF {` in addition to `NAME {`.
+  - The two checks continue to coordinate (longest-key extra-space case defers
+    to `space_before_arrow`).
+- Removed the fragile line-delta (<= 2) heuristic and global FARROW scan entirely.
+
+### Added
+- New check: `unquoted_ensure_value` (WARNING).  Flags bareword values on
+  `ensure =>` (e.g. `ensure => present`) and recommends single-quoted form for
+  visual consistency with the rest of the attribute block.  Implements `--fix`
+  (wraps the value in single quotes).  User's long-standing style pet peeve.
+
+## [1.3.3] - 2026-05-24
+>>>>>>> bab7829 (Committing latest refactor work)
 
 ## [1.3.3] - 2026-09-21
 
