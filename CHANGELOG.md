@@ -6,38 +6,34 @@ All notable changes to openvox-lint will be documented in this file.
 
 ## [1.3.3] - 2026-09-21
 
-Review remediations since 1.3.2 (issues and PRs #6–#14). Patch release: bug fixes, fail-closed CLI behavior, and documentation. No new checks.
+Patch release since 1.3.2. Safer CI and auto-fix, clearer checks and CLI, and an honest story for custom checks. No new checks.
 
 ### Security
-- GitHub Actions annotations (`-f github`) now sanitize path and message values (newlines, `%0A`/`%0D`, and `::`) so untrusted lint output cannot inject workflow commands.
-- RC files can no longer enable destructive `--fix`. Precedence is defaults < user RC < project RC < CLI; pass `--fix` on the CLI to enable, or `--no-fix` to disable.
-- `--fix` refuses to write if the target path is a symlink or any path component is a symlink, and opens with `O_NOFOLLOW` when available.
-- CSV output now escapes fields that contain commas, quotes, or newlines.
+- Safer CI output. GitHub annotation format (`-f github`) can no longer let crafted lint messages inject extra commands into the Actions log.
+- Safer config. An `.openvox-lint.rc` can no longer quietly enable rewrite/fix mode. `--fix` must be passed on the CLI.
+- Safer auto-fix. `--fix` refuses to write if the path is a symlink or goes through one.
+- CSV output escapes fields that contain commas, quotes, or newlines.
 
-### Fixed
-- Missing paths, empty arguments, empty globs, and directories with no `.pp` files now fail closed (`OpenvoxLint::Error`, CLI exit 1) instead of a silent exit 0.
-- `variable_is_lowercase` no longer flags top-scope names such as `$::mymodule::params::foo`. Leading colons are stripped with the dollar sign.
-- Unterminated heredocs, including a junk end tag such as `| END,`, raise `OpenvoxLint::Error` instead of swallowing the rest of the file.
-- `--relative` emits paths relative to the working directory.
-- Unknown `-f` / `--format` values are rejected (stderr message listing the allowlist, exit 1).
-- `--list-checks` prints each check's name, severity, and description. Help documents `--no-<check>-check`.
-- RC files honor `--log-format` (a named format or a custom placeholder string) and `--format`.
-- `arrow_alignment` and `space_before_arrow` use `[1..-1]` instead of endless ranges (`[1..]`), the Ruby 2.5-safe form from earlier in this stack.
+### Architect
+- Honest extension story. Docs say require your file and register the check. There is no gem auto-load plugin ecosystem.
+- A duplicate check name always warns when it is overwritten.
+- Dead-API cleanup, and the lexer comment no longer claims EPP tag scanning. See [docs/ARCHITECTURE_REVIEW.md](docs/ARCHITECTURE_REVIEW.md).
 
-### Changed
-- **Ruby floor is ≥ 2.6.0.** Ruby 2.5 is no longer claimed. Development `rubocop ~> 1.50` requires Ruby ≥ 2.6, so the untestable 2.5 CI job was dropped. The matrix remains `2.6` and `3.1`–`3.3`.
-- `OpenvoxLint.new_check` always warns on stderr when a check name is overwritten (no longer gated on `OPENVOX_LINT_DEBUG`).
-- `Checks#run` calls `CheckPlugin#fix_problems` directly. The `respond_to?(:fix_problems)` guard was unused because the method is defined on the base class.
-- `CheckPlugin#compute_resource_indexes` no longer walks `formatting?` tokens; `semantic_tokens` already excludes them.
+### Quality
+- `$::` topscope names no longer false-positive on `variable_is_lowercase` (#2).
+- Broken heredocs (unterminated, or a junk end tag such as a comma after `END`) now fail with a clear error (#5).
 
-### Documentation
-- README includes a GitHub Actions CI badge for the `development` branch.
-- Added [docs/ARCHITECTURE_REVIEW.md](docs/ARCHITECTURE_REVIEW.md) with path and symbol cites for the lexer/token/check plugin model, dead APIs, puppet-lint comparison honesty, design drift, extensibility, versioning, and dependency boundaries.
-- Documented the real custom-check loading model: require-your-file only; no `--load` and no gem auto-discovery (README, DOCUMENTATION).
-- Dated the puppet-lint comparison tables against puppet-lint `main` as of 2026-09-18 (GitHub Actions, Code Climate, built-in fact checks, plugin loader).
-- Softened the gemspec `--fix` claim to the five checks that implement `#fix`.
-- The release checklist now requires the git tag, the RubyGems publish, and the GitHub Release to stay in sync, with verification steps.
-- The lexer class comment no longer claims EPP tag scanning. The 1.0.0 changelog line below is corrected to match the implementation.
+### CLI
+- `--relative` rewrites paths in all output formats.
+- An unknown `-f` fails closed and prints the allowlist.
+- `--list-checks` shows name, severity, and description.
+- `--help` documents `--no-<check>-check`.
+- RC `--log-format` and `--format` behave like the CLI.
+
+### Systems
+- The Ruby floor is now ≥ 2.6. Ruby 2.5 is no longer claimed, because CI cannot honestly test it.
+- Missing or empty input paths fail closed instead of exiting 0 with a clean run (#7).
+- The README CI badge and the release checklist keep the git tag, the RubyGems publish, and the GitHub Release in sync.
 
 ## [1.3.2] - 2026-05-24
 
