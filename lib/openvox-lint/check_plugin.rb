@@ -91,10 +91,12 @@ module OpenvoxLint
     def compute_resource_indexes
       results = []; i = 0; sem = semantic_tokens
       while i < sem.length
-        if sem[i].type == :NAME && i + 1 < sem.length && sem[i + 1].type == :LBRACE
-          # Skip NAME { that belong to class/define/node bodies rather than
-          # actual resources. This prevents inner statements (including other
-          # resources) from being treated as parameters of the class itself.
+        if (sem[i].type == :NAME || sem[i].type == :CLASSREF) &&
+           i + 1 < sem.length && sem[i + 1].type == :LBRACE
+          # Skip NAME/CLASSREF { that belong to class/define/node bodies
+          # rather than actual resources (including resource defaults such
+          # as "File {"). This prevents inner statements from being treated
+          # as parameters of the class itself.
           # `sem` is already formatting-free, so the previous semantic token
           # is the only one that can be the class/define/node keyword.
           prev = i.positive? ? sem[i - 1] : nil

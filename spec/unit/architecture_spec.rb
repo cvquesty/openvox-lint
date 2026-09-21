@@ -62,6 +62,25 @@ RSpec.describe 'Architecture contracts' do
       types = indexes_for("file { '/tmp/x': }\n").map { |r| r[:type].value }
       expect(types).to eq(['file'])
     end
+
+    it 'indexes CLASSREF resource defaults and skips capitalized class or define names' do
+      code = <<~PP
+        File {
+          mode => '0644',
+        }
+        class Foo {
+          Notify { loglevel => notice }
+          file { '/tmp/x': ensure => file }
+        }
+        define Bar {
+          service { 'sshd': ensure => running }
+        }
+      PP
+      indexes = indexes_for(code)
+      expect(indexes.map { |r| r[:type].value }).to contain_exactly('File', 'Notify', 'file', 'service')
+      file_default = indexes.find { |r| r[:type].value == 'File' }
+      expect(file_default[:param_tokens].map(&:value)).to include('mode', "'0644'")
+    end
   end
 
   describe 'Lexer EPP honesty' do
