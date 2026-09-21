@@ -2,7 +2,7 @@
 
 # Resource bodies and parameter lists should end with a trailing comma.
 #
-# Only fires inside resource bodies (NAME { ... }) — not inside
+# Only fires inside resource bodies (NAME or CLASSREF { ... }) — not inside
 # conditionals (if/unless/case), class bodies, or other brace contexts
 # where a trailing comma is not expected.
 OpenvoxLint.new_check(:trailing_comma) do
